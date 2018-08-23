@@ -107,7 +107,7 @@ class NoiseTranpose2d(nn.Module):
         self.noise = torch.randn(1,in_planes,1,1)
         self.level = level
         self.layers = nn.Sequential(
-            nn.Upsample(scale_factor=2, mode='nearest')
+            nn.Upsample(scale_factor=2, mode='nearest'),
             nn.ReLU(True),
             nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1),
             nn.BatchNorm2d(out_planes),
