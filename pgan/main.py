@@ -13,6 +13,7 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 import torch.nn.functional as F
 
+torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', required=True, help='cifar10 | lsun | imagenet | folder | lfw | fake')
@@ -230,7 +231,6 @@ for epoch in range(opt.niter):
 
         # train with fake
         noise = torch.randn(batch_size, nz, 1, 1, device=device)
-        noise = noise.cuda()
         fake = netG(noise)
         label.fill_(fake_label)
         output = netD(fake.detach())
