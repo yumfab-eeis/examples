@@ -91,7 +91,6 @@ ngf = int(opt.ngf)
 ndf = int(opt.ndf)
 nc = 3
 
-
 # custom weights initialization called on netG and netD
 def weights_init(m):
     classname = m.__class__.__name__
@@ -117,7 +116,7 @@ class NoiseTranpose2d(nn.Module):
     def forward(self, x):
         tmp1 = x.data.shape
         tmp2 = self.noise.shape
-
+        print (tmp1, tmp2)
         if (tmp1[1] != tmp2[1]) or (tmp1[2] != tmp2[2]) or (tmp1[3] != tmp2[3]):
             self.noise = (2*torch.rand(x.data.shape)-1)*self.level
             self.noise = self.noise.cuda()
