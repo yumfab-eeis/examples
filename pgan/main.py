@@ -116,10 +116,8 @@ class NoiseTranpose2d(nn.Module):
     def forward(self, x):
         tmp1 = x.data.shape
         tmp2 = self.noise.shape
-        print (tmp1, tmp2)
-        print (tmp1[1], tmp2[1])
-        print (tmp1[1]==tmp2[1])
         if tmp1[0] != tmp2[0]:
+            print ("changetime!!!!")
             self.noise = self.noise[0:tmp1[0]-1, :, :, :]
         if (tmp1[1] != tmp2[1]) or (tmp1[2] != tmp2[2]) or (tmp1[3] != tmp2[3]):
             print ("                             ho!!!!!!!!!!!!!!!")
