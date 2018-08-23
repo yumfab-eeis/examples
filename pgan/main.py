@@ -155,6 +155,7 @@ class Generator(nn.Module):
 
 
 netG = Generator(ngpu).to(device)
+netG = netG.cuda()
 netG.apply(weights_init)
 if opt.netG != '':
     netG.load_state_dict(torch.load(opt.netG))
