@@ -122,7 +122,7 @@ class NoiseTranpose2d(nn.Module):
                 self.noise = self.noise[0:tmp1[0], :, :, :]
             else:
                 self.noise = self.noise.expand([tmp1[0], tmp2[1], tmp2[2], tmp2[3]])
-            print ('convert:',tmp1, tmp2)
+            print ('convert:',tmp1, self.noise.shape)
 
         if (tmp1[1] != tmp2[1]) or (tmp1[2] != tmp2[2]) or (tmp1[3] != tmp2[3]):
             self.noise = (2*torch.rand(x.data.shape)-1)*self.level
@@ -238,7 +238,6 @@ for epoch in range(opt.niter):
 
         # train with fake
         noise = torch.randn(batch_size, nz, 1, 1, device=device)
-        print (batch_size)
         fake = netG(noise)
         label.fill_(fake_label)
         output = netD(fake.detach())
