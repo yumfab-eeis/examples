@@ -117,11 +117,14 @@ class NoiseTranpose2d(nn.Module):
         tmp1 = x.data.shape
         tmp2 = self.noise.shape
         print (tmp1, tmp2)
-        # if tmp1[0] != tmp2[0] and tmp1[0]<tmp2[0]:
-        #     self.noise = self.noise[0:tmp1[0], :, :, :]
+        if tmp1[0] != tmp2[0]:
+            if tmp1[0]<tmp2[0]:
+                self.noise = self.noise[0:tmp1[0], :, :, :]
+            else:
+                self.noise = self.noise.expand([tmp1[0], tmp2[1], tmp2[2], tmp2[3]])
+            print ('convert:',tmp1, tmp2)
 
         if (tmp1[1] != tmp2[1]) or (tmp1[2] != tmp2[2]) or (tmp1[3] != tmp2[3]):
-            print ("                             ho!!!!!!!!!!!!!!!")
             self.noise = (2*torch.rand(x.data.shape)-1)*self.level
             self.noise = self.noise.cuda()
 
@@ -224,8 +227,8 @@ for epoch in range(opt.niter):
         # train with real
         netD.zero_grad()
         real_cpu = data[0].to(device)
-        #batch_size = real_cpu.size(0)
-        batch_size = opt.batchSize
+        batch_size = real_cpu.size(0)
+        #batch_size = opt.batchSize
         label = torch.full((batch_size,), real_label, device=device)
 
         output = netD(real_cpu)
