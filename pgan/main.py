@@ -116,7 +116,7 @@ class NoiseTranpose2d(nn.Module):
     def forward(self, x):
         tmp1 = x.data.shape
         tmp2 = self.noise.shape
-        print (tmp1, tmp2)
+
         if (tmp1[1] != tmp2[1]) or (tmp1[2] != tmp2[2]) or (tmp1[3] != tmp2[3]):
             self.noise = (2*torch.rand(x.data.shape)-1)*self.level
             self.noise = self.noise.cuda()
@@ -133,7 +133,7 @@ class Generator(nn.Module):
             # input is Z, going into a convolution
             NoiseTranpose2d(     nz, ngf * 8, 0.1),
             # state size. (ngf*8) x 2 x 2
-            NoiseTranpose2d(ngf * 8, ngf * 8, 0.1),
+            NoiseTranpose2d(ngf * 8, ngf * 4, 0.1),
             # state size. (ngf*4) x 4 x 4
             NoiseTranpose2d(ngf * 4, ngf * 4, 0.1),
             # state size. (ngf*4) x 8 x 8
