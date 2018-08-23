@@ -121,7 +121,9 @@ class NoiseTranpose2d(nn.Module):
             if tmp1[0]<tmp2[0]:
                 self.noise = self.noise[0:tmp1[0], :, :, :]
             else:
-                self.noise = self.noise.expand([tmp1[0], tmp2[1], tmp2[2], tmp2[3]])
+                expand_noise = torch.Tensor(tmp1[0], tmp2[1], tmp2[2], tmp2[3])
+                expand_noise[:, :, :, :] = self.noise[0, 0, 0, 0]
+                self.noise = expand_noise
             print ('convert:',tmp1, self.noise.shape)
 
         if (tmp1[1] != tmp2[1]) or (tmp1[2] != tmp2[2]) or (tmp1[3] != tmp2[3]):
