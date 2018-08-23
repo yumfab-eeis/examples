@@ -230,6 +230,7 @@ for epoch in range(opt.niter):
 
         # train with fake
         noise = torch.randn(batch_size, nz, 1, 1, device=device)
+        noise = noise.cuda()
         fake = netG(noise)
         label.fill_(fake_label)
         output = netD(fake.detach())
