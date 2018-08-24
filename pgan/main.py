@@ -107,7 +107,6 @@ class NoiseTranpose2d(nn.Module):
         self.noise = torch.randn(1,in_planes,1,1)
         self.level = level
         self.layers = nn.Sequential(
-            nn.Upsample(scale_factor=2, mode='nearest'),
             nn.ReLU(True),
             nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1),
             nn.BatchNorm2d(out_planes),
@@ -138,16 +137,22 @@ class Generator(nn.Module):
         self.ngpu = ngpu
         self.main = nn.Sequential(
             # input is Z, going into a convolution
+            nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(     nz, ngf * 8, 0.1),
             # state size. (ngf*8) x 2 x 2
+            nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(ngf * 8, ngf * 4, 0.1),
             # state size. (ngf*4) x 4 x 4
+            nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(ngf * 4, ngf * 4, 0.1),
             # state size. (ngf*4) x 8 x 8
+            nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(ngf * 4, ngf * 2, 0.1),
             # state size. (ngf*2) x 16 x 16
+            nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(ngf * 2,     ngf, 0.1),
             # state size. (ngf) x 32 x 32
+            nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(    ngf,      nc, 0.1),
             nn.Tanh()
             # state size. (nc) x 64 x 64
