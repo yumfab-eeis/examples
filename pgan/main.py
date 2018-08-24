@@ -202,13 +202,6 @@ class Generator(nn.Module):
             NoiseTranpose2d(    ngf,      ngf, 0.1),
             NoiseTranpose2d(    ngf,      ngf, 0.1),
             NoiseTranpose2d(    ngf,      ngf, 0.1),
-            NoiseTranpose2d(    ngf,      ngf, 0.1),
-            NoiseTranpose2d(    ngf,      ngf, 0.1),
-            NoiseTranpose2d(    ngf,      ngf, 0.1),
-            NoiseTranpose2d(    ngf,      ngf, 0.1),
-            NoiseTranpose2d(    ngf,      ngf, 0.1),
-            NoiseTranpose2d(    ngf,      ngf, 0.1),
-            NoiseTranpose2d(    ngf,      ngf, 0.1),
             NoiseTranpose2d(    ngf,      nc, 0.1),
             nn.Tanh()
             # state size. (nc) x 64 x 64
