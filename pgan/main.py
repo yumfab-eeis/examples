@@ -153,7 +153,7 @@ class Generator(nn.Module):
             nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(ngf * 4, ngf * 4, 0.1),
             NoiseTranpose2d(ngf * 4, ngf * 4, 0.1),
-            NoiseTranpose2d(ngf * 4, ngf * 4, 0.1),
+            NoiseTranpose2d(ngf * 4, ngf * 2, 0.1),
             # state size. (ngf*2) x 16 x 16
             nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(ngf * 2, ngf * 2, 0.1),
