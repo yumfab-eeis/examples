@@ -118,6 +118,7 @@ class NoiseResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        print (x.size())
         x1 = self.pre_layers(x)
         print (x1.size())
         x2 = self.layer1(x1)
