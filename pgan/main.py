@@ -209,7 +209,8 @@ class P_Generator(nn.Module):
         return output
 
 
-netG = Generator(ngpu).to(device)
+#netG = Generator(ngpu).to(device)
+netG = P_Generator(ngpu).to(device)
 netG = netG.cuda()
 netG.apply(weights_init)
 if opt.netG != '':
