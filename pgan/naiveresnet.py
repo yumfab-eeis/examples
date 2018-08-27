@@ -101,6 +101,7 @@ class NoiseResNet(nn.Module):
         self.layer4 = self._make_layer(block, 8*nfilters, nblocks[3], stride=2, level=level)
         self.avgpool = nn.AvgPool2d(pool, stride=1)
         self.linear = nn.Linear(8*nfilters*block.expansion, nclasses)
+        self.sigmoid = nn.Sigmoid()
 
     def _make_layer(self, block, planes, nblocks, stride=1, level=0.2):
         shortcut = None
@@ -126,7 +127,7 @@ class NoiseResNet(nn.Module):
         x6 = self.avgpool(x5)
         x7 = x6.view(x6.size(0), -1)
         x8 = self.linear(x7)
-        x9 = nn.Sigmoid(x8.view(x8.size(0)))
+        x9 = self.sigmoid(x8.view(x8.size(0)))
         return x9
 
 def noiseresnet18(nchannels, nfilters, nclasses, pool=7, level=0.1):
