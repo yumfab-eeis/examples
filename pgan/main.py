@@ -280,7 +280,8 @@ for epoch in range(opt.niter):
         label = torch.full((batch_size,), real_label, device=device)
 
         output = netD(real_cpu)
-        print (output.size())
+        if output < 0:
+            print ('0!!!')
         errD_real = criterion(output, label)
         errD_real.backward()
         D_x = output.mean().item()
