@@ -12,6 +12,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
 import torch.nn.functional as F
+import naiveresnet
 
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -168,7 +169,7 @@ class Generator(nn.Module):
 
 class P_Generator(nn.Module):
     def __init__(self, ngpu):
-        super(Generator, self).__init__()
+        super(P_Generator, self).__init__()
         self.ngpu = ngpu
         self.main = nn.Sequential(
             # input is Z, going into a convolution
@@ -249,8 +250,8 @@ class Discriminator(nn.Module):
 
         return output.view(-1, 1).squeeze(1)
 
-
-netD = Discriminator(ngpu).to(device)
+#netD = Discriminator(ngpu).to(device)
+netD = naiveresnet.noiseresnet18(nchannels=3, nfilters=128, nclasses=2)
 netD.apply(weights_init)
 if opt.netD != '':
     netD.load_state_dict(torch.load(opt.netD))
@@ -265,8 +266,6 @@ fake_label = 0
 # setup optimizer
 optimizerD = optim.Adam(netD.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 optimizerG = optim.Adam(netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
-
-update_rate = 1
 
 for epoch in range(opt.niter):
     for i, data in enumerate(dataloader, 0):
@@ -285,7 +284,7 @@ for epoch in range(opt.niter):
         errD_real.backward()
         D_x = output.mean().item()
 
-        for j in range(update_rate):
+        for j in range(opt.trainRate):
             # train with fake
             noise = torch.randn(batch_size, nz, 1, 1, device=device)
             fake = netG(noise)
