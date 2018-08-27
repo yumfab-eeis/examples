@@ -9,7 +9,7 @@ if torch.cuda.is_available():
     device = torch.device("cuda")
 else:
     device = torch.device("cpu")
-    
+
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 def conv3x3(in_planes, out_planes, stride=1):
@@ -18,8 +18,8 @@ def conv3x3(in_planes, out_planes, stride=1):
 class NoiseLayer(nn.Module):
     def __init__(self, in_planes, out_planes, level):
         super(NoiseLayer, self).__init__()
-        self.noise = nn.Parameter(torch.Tensor(0), requires_grad=False).to(device)
-
+        #self.noise = nn.Parameter(torch.Tensor(0), requires_grad=False).to(device)
+        self.noise = torch.randn(1,in_planes,1,1)
         self.level = level
         self.layers = nn.Sequential(
             nn.ReLU(True),
