@@ -118,25 +118,14 @@ class NoiseResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        print (x.size())
         x1 = self.pre_layers(x)
-        print (x1.size())
         x2 = self.layer1(x1)
-        print (x2.size())
         x3 = self.layer2(x2)
-        print (x3.size())
         x4 = self.layer3(x3)
-        print (x4.size())
         x5 = self.layer4(x4)
-        print (x5.size())
-        print ("lets pooling!")
         x6 = self.avgpool(x5)
-        print ("yes!!!!!")
-        print (x6.size())
         x7 = x6.view(x6.size(0), -1)
-        print (x7.size())
         x8 = self.linear(x7)
-        print (x8.size())
         return x8
 
 def noiseresnet18(nchannels, nfilters, nclasses, pool=7, level=0.1):

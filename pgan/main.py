@@ -276,6 +276,7 @@ for epoch in range(opt.niter):
         netD.zero_grad()
         real_cpu = data[0].to(device)
         batch_size = real_cpu.size(0)
+        print ('bs:',batch_size)
         #batch_size = opt.batchSize
         label = torch.full((batch_size,), real_label, device=device)
 
