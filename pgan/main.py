@@ -276,11 +276,11 @@ for epoch in range(opt.niter):
         netD.zero_grad()
         real_cpu = data[0].to(device)
         batch_size = real_cpu.size(0)
-        print ('bs:',batch_size)
         #batch_size = opt.batchSize
         label = torch.full((batch_size,), real_label, device=device)
 
         output = netD(real_cpu)
+        assert (input >= 0. & input <= 1.).all()
         errD_real = criterion(output, label)
         errD_real.backward()
         D_x = output.mean().item()
