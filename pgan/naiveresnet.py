@@ -119,21 +119,21 @@ class NoiseResNet(nn.Module):
 
     def forward(self, x):
         x1 = self.pre_layers(x)
-        print (x1.size)
+        print (x1.size())
         x2 = self.layer1(x1)
-        print (x2.size)
+        print (x2.size())
         x3 = self.layer2(x2)
-        print (x3.size)
+        print (x3.size())
         x4 = self.layer3(x3)
-        print (x4.size)
+        print (x4.size())
         x5 = self.layer4(x4)
-        print (x5.size)
+        print (x5.size())
         x6 = self.avgpool(x5)
-        print (x6.size)
+        print (x6.size())
         x7 = x6.view(x6.size(0), -1)
-        print (x7.size)
+        print (x7.size())
         x8 = self.linear(x7)
-        print (x8.size)
+        print (x8.size())
         return x8
 
 def noiseresnet18(nchannels, nfilters, nclasses, pool=7, level=0.1):
