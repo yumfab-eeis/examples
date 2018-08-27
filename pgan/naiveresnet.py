@@ -93,7 +93,7 @@ class NoiseResNet(nn.Module):
             nn.Conv2d(nchannels,nfilters,kernel_size=7,stride=2,padding=3,bias=False),
             nn.BatchNorm2d(nfilters),
             nn.ReLU(True),
-            nn.MaxPool2d(kernel_size=3,stride=2,padding=1)
+            nn.MaxPool2d(kernel_size=2,stride=2,padding=1)
         )
         self.layer1 = self._make_layer(block, 1*nfilters, nblocks[0], level=level)
         self.layer2 = self._make_layer(block, 2*nfilters, nblocks[1], stride=2, level=level)
