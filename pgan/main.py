@@ -251,7 +251,7 @@ class Discriminator(nn.Module):
         return output.view(-1, 1).squeeze(1)
 
 #netD = Discriminator(ngpu).to(device)
-netD = naiveresnet.noiseresnet18(nchannels=3, nfilters=128, nclasses=2)
+netD = naiveresnet.noiseresnet18(nchannels=3, nfilters=64, nclasses=2)
 netD.apply(weights_init)
 if opt.netD != '':
     netD.load_state_dict(torch.load(opt.netD))
