@@ -126,9 +126,8 @@ class NoiseResNet(nn.Module):
         x6 = self.avgpool(x5)
         x7 = x6.view(x6.size(0), -1)
         x8 = self.linear(x7)
-        x9 = x8.view(x8.size(0))
-        x10 = nn.Sigmoid(x9)
-        return x10
+        x9 = nn.Sigmoid(x8.view(x8.size(0)))
+        return x9
 
 def noiseresnet18(nchannels, nfilters, nclasses, pool=7, level=0.1):
     return NoiseResNet(NoiseBasicBlock, [2,2,2,2], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, pool=pool, level=level)
