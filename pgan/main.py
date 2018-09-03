@@ -24,7 +24,6 @@ parser.add_argument('--batchSize', type=int, default=64, help='input batch size'
 parser.add_argument('--imageSize', type=int, default=64, help='the height / width of the input image to network')
 parser.add_argument('--nz', type=int, default=100, help='size of the latent z vector')
 parser.add_argument('--ngf', type=int, default=64)
-parser.add_argument('--ndf', type=int, default=64)
 parser.add_argument('--niter', type=int, default=25, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.0002, help='learning rate, default=0.0002')
 parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. default=0.5')
@@ -35,6 +34,8 @@ parser.add_argument('--netD', default='', help="path to netD (to continue traini
 parser.add_argument('--outf', default='.', help='folder to output images and model checkpoints')
 parser.add_argument('--manualSeed', type=int, help='manual seed')
 parser.add_argument('--trainRate', type=int, default=1, help='train rate of G:D')
+parser.add_argument('--activatePG', action='store_true', help='activate Generator with PNN')
+parser.add_argument('--activatePD', action='store_true', help='activate Discriminator with PNN')
 
 opt = parser.parse_args()
 print(opt)
@@ -208,9 +209,12 @@ class P_Generator(nn.Module):
             output = self.main(input)
         return output
 
-
-#netG = Generator(ngpu).to(device)
-netG = P_Generator(ngpu).to(device)
+if opt.activatePG:
+    print ('activate Generator with PNN...')
+    netG = P_Generator(ngpu).to(device)
+else:
+    print ('activate Generator with CNN...')
+    netG = Generator(ngpu).to(device)
 netG = netG.cuda()
 netG.apply(weights_init)
 if opt.netG != '':
@@ -251,8 +255,12 @@ class Discriminator(nn.Module):
 
         return output.view(-1, 1).squeeze(1)
 
-#netD = Discriminator(ngpu).to(device)
-netD = naiveresnet.noiseresnet18(nchannels=3, nfilters=128, nclasses=1 , pool=2)
+if opt.activatePD:
+    print ('activate Discriminator with PNN...')
+    netD = naiveresnet.noiseresnet18(nchannels=3, nfilters=128, nclasses=1 , pool=2)
+else:
+    print ('activate Discriminator with CNN...')
+    netD = Discriminator(ngpu).to(device)
 netD.apply(weights_init)
 if opt.netD != '':
     netD.load_state_dict(torch.load(opt.netD))
