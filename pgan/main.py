@@ -174,32 +174,36 @@ class P_Generator(nn.Module):
     def __init__(self, ngpu):
         super(P_Generator, self).__init__()
         self.ngpu = ngpu
+        self.noise_level = 0.5
         self.main = nn.Sequential(
             # input is Z, going into a convolution
             nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(     nz, ngf * 8, 0.1),
-            NoiseTranpose2d(     ngf * 8, ngf * 8, 0.1),
+            NoiseTranpose2d(     nz, ngf * 8, self.noise_level),
+            NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
             # state size. (ngf*8) x 2 x 2
             nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(ngf * 8, ngf * 8, 0.1),
-            NoiseTranpose2d(ngf * 8, ngf * 4, 0.1),
+            NoiseTranpose2d(ngf * 8, ngf * 8, self.noise_level),
+            NoiseTranpose2d(ngf * 8, ngf * 4, self.noise_level),
             # state size. (ngf*4) x 4 x 4
             nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(ngf * 4, ngf * 4, 0.1),
-            NoiseTranpose2d(ngf * 4, ngf * 4, 0.1),
+            NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
+            NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
             # state size. (ngf*4) x 8 x 8
             nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(ngf * 4, ngf * 4, 0.1),
-            NoiseTranpose2d(ngf * 4, ngf * 2, 0.1),
+            NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
+            NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
+            NoiseTranpose2d(ngf * 4, ngf * 2, self.noise_level),
             # state size. (ngf*2) x 16 x 16
             nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(ngf * 2, ngf * 2, 0.1),
-            NoiseTranpose2d(ngf * 2,     ngf, 0.1),
+            NoiseTranpose2d(ngf * 2, ngf * 2, self.noise_level),
+            NoiseTranpose2d(ngf * 2, ngf * 2, self.noise_level),
+            NoiseTranpose2d(ngf * 2,     ngf, self.noise_level),
             # state size. (ngf) x 32 x 32
             nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(    ngf,      ngf, 0.1),
-            NoiseTranpose2d(    ngf,      ngf, 0.1),
-            NoiseTranpose2d(    ngf,      nc, 0.1),
+            NoiseTranpose2d(    ngf,      ngf, self.noise_level),
+            NoiseTranpose2d(    ngf,      ngf, self.noise_level),
+            NoiseTranpose2d(    ngf,      ngf, self.noise_level),
+            NoiseTranpose2d(    ngf,      nc, self.noise_level),
             nn.Tanh()
             # state size. (nc) x 64 x 64
         )
