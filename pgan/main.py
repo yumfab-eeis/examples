@@ -34,7 +34,8 @@ parser.add_argument('--netG', default='', help="path to netG (to continue traini
 parser.add_argument('--netD', default='', help="path to netD (to continue training)")
 parser.add_argument('--outf', default='.', help='folder to output images and model checkpoints')
 parser.add_argument('--manualSeed', type=int, help='manual seed')
-parser.add_argument('--trainRate', type=int, default=1, help='train rate of G:D')
+parser.add_argument('--trainRateG', type=int, default=1, help='train rate of G:D')
+parser.add_argument('--trainRateD', type=int, default=1, help='train rate of D:G')
 parser.add_argument('--activatePG', action='store_true', help='activate Generator with PNN')
 parser.add_argument('--activatePD', action='store_true', help='activate Discriminator with PNN')
 
@@ -282,19 +283,20 @@ for epoch in range(opt.niter):
         ############################
         # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
         ###########################
-        # train with real
-        netD.zero_grad()
-        real_cpu = data[0].to(device)
-        batch_size = real_cpu.size(0)
-        #batch_size = opt.batchSize
-        label = torch.full((batch_size,), real_label, device=device)
+        for j in range(opt.trainRateD):
+            # train with real
+            netD.zero_grad()
+            real_cpu = data[0].to(device)
+            batch_size = real_cpu.size(0)
+            #batch_size = opt.batchSize
+            label = torch.full((batch_size,), real_label, device=device)
 
-        output = netD(real_cpu)
-        errD_real = criterion(output, label)
-        errD_real.backward()
-        D_x = output.mean().item()
+            output = netD(real_cpu)
+            errD_real = criterion(output, label)
+            errD_real.backward()
+            D_x = output.mean().item()
 
-        for j in range(opt.trainRate):
+        for j in range(opt.trainRateG):
             # train with fake
             noise = torch.randn(batch_size, nz, 1, 1, device=device)
             fake = netG(noise)

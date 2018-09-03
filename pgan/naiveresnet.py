@@ -12,9 +12,6 @@ else:
 
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
-def conv3x3(in_planes, out_planes, stride=1):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
-
 class NoiseLayer(nn.Module):
     def __init__(self, in_planes, out_planes, level):
         super(NoiseLayer, self).__init__()
