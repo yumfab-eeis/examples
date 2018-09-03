@@ -198,12 +198,8 @@ class P_Generator(nn.Module):
             NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
             NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
             NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
-            NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
-            NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
             # state size. (ngf*4) x 8 x 8
             nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
-            NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
             NoiseTranpose2d(ngf * 4, ngf * 4, self.noise_level),
             NoiseTranpose2d(ngf * 4, ngf * 2, self.noise_level),
             # state size. (ngf*2) x 16 x 16
@@ -211,13 +207,9 @@ class P_Generator(nn.Module):
             NoiseTranpose2d(ngf * 2, ngf * 2, self.noise_level),
             NoiseTranpose2d(ngf * 2, ngf * 2, self.noise_level),
             NoiseTranpose2d(ngf * 2, ngf * 2, self.noise_level),
-            NoiseTranpose2d(ngf * 2, ngf * 2, self.noise_level),
-            NoiseTranpose2d(ngf * 2, ngf * 2, self.noise_level),
             NoiseTranpose2d(ngf * 2,     ngf, self.noise_level),
             # state size. (ngf) x 32 x 32
             nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(    ngf,      ngf, self.noise_level),
-            NoiseTranpose2d(    ngf,      ngf, self.noise_level),
             NoiseTranpose2d(    ngf,      ngf, self.noise_level),
             NoiseTranpose2d(    ngf,      ngf, self.noise_level),
             NoiseTranpose2d(    ngf,      nc, self.noise_level),
