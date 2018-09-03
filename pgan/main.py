@@ -177,14 +177,17 @@ class P_Generator(nn.Module):
         self.noise_level = 0.2
         self.main = nn.Sequential(
             # input is Z, going into a convolution
-            NoiseTranpose2d(     nz, ngf * 8, self.noise_level),
-            NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
-            NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
-            NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
-            NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
-            NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
-            NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
-            NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
+            nn.ConvTranspose2d(     nz, ngf * 8, 4, 1, 0, bias=False),
+            nn.BatchNorm2d(ngf * 8),
+            nn.ReLU(True),
+            # NoiseTranpose2d(     nz, ngf * 8, self.noise_level),
+            # NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
+            # NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
+            # NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
+            # NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
+            # NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
+            # NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
+            # NoiseTranpose2d(     ngf * 8, ngf * 8, self.noise_level),
             # state size. (ngf*8) x 2 x 2
             nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(ngf * 8, ngf * 8, self.noise_level),
