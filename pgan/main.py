@@ -177,6 +177,7 @@ class P_Generator(nn.Module):
         self.noise_level = 0.2
         self.main = nn.Sequential(
             # input is Z, going into a convolution
+            nn.Upsample(scale_factor=2, mode='nearest'),
             NoiseTranpose2d(     nz, ngf * 8, 0.5),
             NoiseTranpose2d(     ngf * 8, ngf * 8, 0.5),
             NoiseTranpose2d(     ngf * 8, ngf * 8, 0.5),
