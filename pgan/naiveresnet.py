@@ -25,6 +25,16 @@ class NoiseLayer(nn.Module):
         )
 
     def forward(self, x):
+        tmp1 = x.data.shape
+        tmp2 = self.noise.shape
+        if tmp1[0] != tmp2[0]:
+            if tmp1[0]<tmp2[0]:
+                self.noise = self.noise[0:tmp1[0], :, :, :]
+            else:
+                expand_noise = torch.Tensor(tmp1[0], tmp2[1], tmp2[2], tmp2[3])
+                expand_noise[:, :, :, :] = self.noise[0, 0, 0, 0]
+                self.noise = expand_noise
+                
         if self.noise.numel() == 0:
             self.noise.resize_(x.data[0].shape).uniform_()
             self.noise = (2 * self.noise - 1) * self.level
