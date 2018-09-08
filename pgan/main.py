@@ -132,6 +132,8 @@ class NoiseTranpose2d(nn.Module):
             self.noise = (2*torch.rand(x.data.shape)-1)*self.level
             self.noise = self.noise.cuda()
 
+        print (x.data.shape)
+        print (self.noise.shape)
         x.data = x.data + self.noise
         x = self.layers(x)
         return x
@@ -216,7 +218,8 @@ class P_Generator(nn.Module):
 
 if opt.activatePG:
     print ('activate Generator with PNN...')
-    netG = P_Generator(ngpu).to(device)
+    #netG = P_Generator(ngpu).to(device)
+    netG = naiveresnet.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
 else:
     print ('activate Generator with CNN...')
     netG = Generator(ngpu).to(device)
@@ -265,8 +268,8 @@ if opt.activatePD:
     netD = naiveresnet.noiseresnet18(nchannels=3, nfilters=128, nclasses=1 , pool=2)
 else:
     print ('activate Discriminator with CNN...')
-    #netD = Discriminator(ngpu).to(device)
-    netD = naiveresnet.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
+    netD = Discriminator(ngpu).to(device)
+    #netD = naiveresnet.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
 netD.apply(weights_init)
 if opt.netD != '':
     netD.load_state_dict(torch.load(opt.netD))
