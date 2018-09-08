@@ -94,7 +94,6 @@ ngpu = int(opt.ngpu)
 nz = int(opt.nz)
 ngf = int(opt.ngf)
 ndf = int(opt.ndf)
-nc = 3
 
 if opt.activatePG:
     print ('activate Generator with PNN...')

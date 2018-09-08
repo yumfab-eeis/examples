@@ -23,6 +23,8 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
+nc = 3 #number of class
+
 def weights_init(m):
     classname = m.__class__.__name__
     if classname.find('Conv') != -1:
