@@ -265,7 +265,7 @@ if opt.activatePD:
     netD = naiveresnet.noiseresnet18(nchannels=3, nfilters=128, nclasses=1 , pool=2)
 else:
     print ('activate Discriminator with CNN...')
-    netD = Discriminator(ngpu).to(device)
+    netD = naiveresnet.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
 netD.apply(weights_init)
 if opt.netD != '':
     netD.load_state_dict(torch.load(opt.netD))

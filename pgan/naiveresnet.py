@@ -56,6 +56,39 @@ class NoiseBasicBlock(nn.Module):
         y = F.relu(y)
         return y
 
+class NoiseNoPoolBlock(nn.Module):
+    expansion = 1
+    def __init__(self, in_planes, planes, stride=1, shortcut=None, level=0.2, isLastBN=True):
+        super(NoiseNoPoolBlock, self).__init__()
+        if isLastBN:
+            self.layers = nn.Sequential(
+                NoiseLayer(in_planes, planes, level),
+                #nn.MaxPool2d(stride, stride),
+                nn.BatchNorm2d(planes),
+                nn.ReLU(True),
+                NoiseLayer(planes, planes, level),
+                nn.BatchNorm2d(planes),
+            )
+        else:
+            self.layers = nn.Sequential(
+                NoiseLayer(in_planes, planes, level),
+                #nn.MaxPool2d(stride, stride),
+                nn.BatchNorm2d(planes),
+                nn.ReLU(True),
+                NoiseLayer(planes, planes, level),
+                #nn.BatchNorm2d(planes),
+            )
+        self.shortcut = shortcut
+
+    def forward(self, x):
+        residual = x
+        y = self.layers(x)
+        if self.shortcut:
+            residual = self.shortcut(x)
+        y += residual
+        y = F.relu(y)
+        return y
+
 class NoiseBottleneck(nn.Module):
     expansion = 4
     def __init__(self, in_planes, planes, stride=1, shortcut=None, level=0.2):
@@ -127,17 +160,67 @@ class NoiseResNet(nn.Module):
         x9 = self.sigmoid(x8.view(x8.size(0)))
         return x9
 
+class NoiseResGenetator(nn.Module):
+    def __init__(self, block, nblocks, nchannels, nfilters, nclasses, level):
+        super(NoiseResGenetator, self).__init__()
+        self.in_planes = nfilters
+        self.layer1 = self._make_layer(block, 8*nfilters, nblocks[0], level=level)
+        self.layer2 = self._make_layer(block, 4*nfilters, nblocks[1], stride=2, level=level)
+        self.layer3 = self._make_layer(block, 2*nfilters, nblocks[2], stride=2, level=level)
+        self.layer4 = self._make_layer(block, 1*nfilters, nblocks[3], stride=2, level=level, isLastBN=False)
+        self.upsample = nn.Upsample(scale_factor=2, mode='nearest')
+        self.tanh = nn.Tanh()
+
+    def _make_layer(self, block, planes, nblocks, stride=1, level=0.2, isLastBN=True):
+        shortcut = None
+        if stride != 1 or self.in_planes != planes * block.expansion:
+            shortcut = nn.Sequential(
+                nn.Conv2d(self.in_planes, planes * block.expansion,
+                          kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(planes * block.expansion),
+            )
+        layers = []
+        layers.append(block(self.in_planes, planes, stride, shortcut, level=level))
+        self.in_planes = planes * block.expansion
+        for i in range(1, nblocks):
+            if i == nblocks and isLastBN == False:
+                layers.append(block(self.in_planes, planes, level=level, isLastBN=False))
+            else:
+                layers.append(block(self.in_planes, planes, level=level))
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        x1 = x #TO DO
+        x2 = self.layer1(x1)
+        x3 = self.upsample(x2)
+        x4 = self.layer2(x3)
+        x5 = self.upsample(x4)
+        x6 = self.layer3(x5)
+        x7 = self.upsample(x6)
+        x8 = self.layer4(x7)
+        x9 = self.tanh(x8)
+        return x9
+
 def noiseresnet18(nchannels, nfilters, nclasses, pool=7, level=0.1):
     return NoiseResNet(NoiseBasicBlock, [2,2,2,2], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, pool=pool, level=level)
 
 def noiseresnet34(nchannels, nfilters, nclasses, pool=7, level=0.1):
     return NoiseResNet(NoiseBasicBlock, [3,4,6,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, pool=pool, level=level)
 
-def noiseresnet50(nchannels, nfilters, nclasses, pool=7, level=0.1):
-    return NoiseResNet(NoiseBottleneck, [3,4,6,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, pool=pool, level=level)
-
 def noiseresnet101(nchannels, nfilters, nclasses, pool=7, level=0.1):
     return NoiseResNet(NoiseBottleneck, [3,4,23,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, pool=pool, level=level)
 
 def noiseresnet152(nchannels, nfilters, nclasses, pool=7, level=0.1):
     return NoiseResNet(NoiseBottleneck, [3,8,36,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, pool=pool, level=level)
+
+def noiseresgenerator18(nchannels, nfilters, nclasses, level=0.1):
+    return NoiseResNet(NoiseBasicBlock, [2,2,2,2], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
+
+def noiseresgenerator34(nchannels, nfilters, nclasses, level=0.1):
+    return NoiseResNet(NoiseBasicBlock, [3,4,6,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
+
+def noiseresgenerator101(nchannels, nfilters, nclasses, level=0.1):
+    return NoiseResNet(NoiseBasicBlock, [3,4,23,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
+
+def noiseresgenerator152(nchannels, nfilters, nclasses, level=0.1):
+    return NoiseResNet(NoiseBasicBlock, [3,8,36,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
