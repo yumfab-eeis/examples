@@ -34,11 +34,13 @@ class NoiseLayer(nn.Module):
                 expand_noise = torch.Tensor(tmp1[0], tmp2[1], tmp2[2], tmp2[3])
                 expand_noise[:, :, :, :] = self.noise[0, 0, 0, 0]
                 self.noise = expand_noise
-                
+
         if self.noise.numel() == 0:
             self.noise.resize_(x.data[0].shape).uniform_()
             self.noise = (2 * self.noise - 1) * self.level
 
+        print (x.data.shape)
+        print (self.noise.shape)
         y = torch.add(x, self.noise)
         z = self.layers(y)
         return z
