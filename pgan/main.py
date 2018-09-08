@@ -94,6 +94,7 @@ ngpu = int(opt.ngpu)
 nz = int(opt.nz)
 ngf = int(opt.ngf)
 ndf = int(opt.ndf)
+nc = 3 #number of class
 
 if opt.activatePG:
     print ('activate Generator with PNN...')
@@ -101,7 +102,7 @@ if opt.activatePG:
     netG = models.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
 else:
     print ('activate Generator with CNN...')
-    netG = models.Generator(ngpu).to(device)
+    netG = models.Generator(ngpu, nz, ngf, nc).to(device)
 netG = netG.cuda()
 netG.apply(models.weights_init)
 if opt.netG != '':
@@ -113,7 +114,7 @@ if opt.activatePD:
     netD = models.noiseresnet18(nchannels=3, nfilters=128, nclasses=1 , pool=2)
 else:
     print ('activate Discriminator with CNN...')
-    netD = models.Discriminator(ngpu).to(device)
+    netD = models.Discriminator(ngpu, nz, ndf, nc).to(device)
     #netD = naiveresnet.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
 netD.apply(models.weights_init)
 if opt.netD != '':

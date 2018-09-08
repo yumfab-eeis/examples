@@ -23,8 +23,6 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
-nc = 3 #number of class
-
 def weights_init(m):
     classname = m.__class__.__name__
     if classname.find('Conv') != -1:
@@ -67,7 +65,7 @@ class NoiseTranpose2d(nn.Module):
         return x
 
 class Generator(nn.Module):
-    def __init__(self, ngpu):
+    def __init__(self, ngpu, nz, ngf, nc):
         super(Generator, self).__init__()
         self.ngpu = ngpu
         self.main = nn.Sequential(
@@ -101,7 +99,7 @@ class Generator(nn.Module):
         return output
 
 class P_Generator(nn.Module):
-    def __init__(self, ngpu):
+    def __init__(self, ngpu, nz, ngf, nc):
         super(P_Generator, self).__init__()
         self.ngpu = ngpu
         self.noise_level = 0.2
@@ -145,7 +143,7 @@ class P_Generator(nn.Module):
         return output
 
 class Discriminator(nn.Module):
-    def __init__(self, ngpu):
+    def __init__(self, ngpu, nz, ndf, nc):
         super(Discriminator, self).__init__()
         self.ngpu = ngpu
         self.main = nn.Sequential(
