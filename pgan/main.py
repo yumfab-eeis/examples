@@ -12,7 +12,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
 import torch.nn.functional as F
-import naiveresnet
+import models
 
 torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -96,181 +96,27 @@ ngf = int(opt.ngf)
 ndf = int(opt.ndf)
 nc = 3
 
-# custom weights initialization called on netG and netD
-def weights_init(m):
-    classname = m.__class__.__name__
-    if classname.find('Conv') != -1:
-        m.weight.data.normal_(0.0, 0.02)
-    elif classname.find('BatchNorm') != -1:
-        m.weight.data.normal_(1.0, 0.02)
-        m.bias.data.fill_(0)
-
-class NoiseTranpose2d(nn.Module):
-    def __init__(self, in_planes, out_planes, level):
-        super(NoiseTranpose2d, self).__init__()
-
-        self.noise = torch.randn(1,in_planes,1,1)
-        self.level = level
-        self.layers = nn.Sequential(
-            nn.ReLU(True),
-            nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1),
-            nn.BatchNorm2d(out_planes),
-        )
-
-    def forward(self, x):
-        tmp1 = x.data.shape
-        tmp2 = self.noise.shape
-        if tmp1[0] != tmp2[0]:
-            if tmp1[0]<tmp2[0]:
-                self.noise = self.noise[0:tmp1[0], :, :, :]
-            else:
-                expand_noise = torch.Tensor(tmp1[0], tmp2[1], tmp2[2], tmp2[3])
-                expand_noise[:, :, :, :] = self.noise[0, 0, 0, 0]
-                self.noise = expand_noise
-
-        if (tmp1[1] != tmp2[1]) or (tmp1[2] != tmp2[2]) or (tmp1[3] != tmp2[3]):
-            self.noise = (2*torch.rand(x.data.shape)-1)*self.level
-            self.noise = self.noise.cuda()
-
-        print (x.data.shape)
-        print (self.noise.shape)
-        x.data = x.data + self.noise
-        x = self.layers(x)
-        return x
-
-class Generator(nn.Module):
-    def __init__(self, ngpu):
-        super(Generator, self).__init__()
-        self.ngpu = ngpu
-        self.main = nn.Sequential(
-            # input is Z, going into a convolution
-            nn.ConvTranspose2d(     nz, ngf * 8, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(ngf * 8),
-            nn.ReLU(True),
-            # state size. (ngf*8) x 4 x 4
-            nn.ConvTranspose2d(ngf * 8, ngf * 4, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ngf * 4),
-            nn.ReLU(True),
-            # state size. (ngf*4) x 8 x 8
-            nn.ConvTranspose2d(ngf * 4, ngf * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ngf * 2),
-            nn.ReLU(True),
-            # state size. (ngf*2) x 16 x 16
-            nn.ConvTranspose2d(ngf * 2,     ngf, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ngf),
-            nn.ReLU(True),
-            # state size. (ngf) x 32 x 32
-            nn.ConvTranspose2d(    ngf,      nc, 4, 2, 1, bias=False),
-            nn.Tanh()
-            # state size. (nc) x 64 x 64
-        )
-
-    def forward(self, input):
-        if input.is_cuda and self.ngpu > 1:
-            output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
-        else:
-            output = self.main(input)
-        return output
-
-class P_Generator(nn.Module):
-    def __init__(self, ngpu):
-        super(P_Generator, self).__init__()
-        self.ngpu = ngpu
-        self.noise_level = 0.2
-        self.main = nn.Sequential(
-            # input is Z, going into a convolution
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(     nz, ngf * 8, 0.8),
-            NoiseTranpose2d(     ngf * 8, ngf * 8, 0.8),
-            # state size. (ngf*8) x 2 x 2
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(ngf * 8, ngf * 8, 0.6),
-            NoiseTranpose2d(ngf * 8, ngf * 4, 0.6),
-            # state size. (ngf*4) x 4 x 4
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(ngf * 4, ngf * 4, 0.3),
-            NoiseTranpose2d(ngf * 4, ngf * 4, 0.3),
-            # state size. (ngf*4) x 8 x 8
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(ngf * 4, ngf * 4, 0.2),
-            NoiseTranpose2d(ngf * 4, ngf * 2, 0.2),
-            # state size. (ngf*2) x 16 x 16
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(ngf * 2, ngf * 2, 0.2),
-            NoiseTranpose2d(ngf * 2, ngf * 2, 0.2),
-            NoiseTranpose2d(ngf * 2,     ngf, 0.2),
-            # state size. (ngf) x 32 x 32
-            nn.Upsample(scale_factor=2, mode='nearest'),
-            NoiseTranpose2d(    ngf,      ngf, 0.2),
-            NoiseTranpose2d(    ngf,      ngf, 0.2),
-            NoiseTranpose2d(    ngf,      ngf, 0.2),
-            NoiseTranpose2d(    ngf,      nc, 0.2),
-            nn.Tanh()
-            # state size. (nc) x 64 x 64
-        )
-
-    def forward(self, input):
-        if input.is_cuda and self.ngpu > 1:
-            output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
-        else:
-            output = self.main(input)
-        return output
-
 if opt.activatePG:
     print ('activate Generator with PNN...')
     #netG = P_Generator(ngpu).to(device)
-    netG = naiveresnet.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
+    netG = models.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
 else:
     print ('activate Generator with CNN...')
-    netG = Generator(ngpu).to(device)
+    netG = models.Generator(ngpu).to(device)
 netG = netG.cuda()
-netG.apply(weights_init)
+netG.apply(models.weights_init)
 if opt.netG != '':
     netG.load_state_dict(torch.load(opt.netG))
 print(netG)
 
-
-class Discriminator(nn.Module):
-    def __init__(self, ngpu):
-        super(Discriminator, self).__init__()
-        self.ngpu = ngpu
-        self.main = nn.Sequential(
-            # input is (nc) x 64 x 64
-            nn.Conv2d(nc, ndf, 4, 2, 1, bias=False),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf) x 32 x 32
-            nn.Conv2d(ndf, ndf * 2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ndf * 2),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf*2) x 16 x 16
-            nn.Conv2d(ndf * 2, ndf * 4, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ndf * 4),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf*4) x 8 x 8
-            nn.Conv2d(ndf * 4, ndf * 8, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(ndf * 8),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf*8) x 4 x 4
-            nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
-            nn.Sigmoid()
-        )
-
-    def forward(self, input):
-        if input.is_cuda and self.ngpu > 1:
-            output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
-        else:
-            output = self.main(input)
-
-        return output.view(-1, 1).squeeze(1)
-
 if opt.activatePD:
     print ('activate Discriminator with PNN...')
-    netD = naiveresnet.noiseresnet18(nchannels=3, nfilters=128, nclasses=1 , pool=2)
+    netD = models.noiseresnet18(nchannels=3, nfilters=128, nclasses=1 , pool=2)
 else:
     print ('activate Discriminator with CNN...')
-    netD = Discriminator(ngpu).to(device)
+    netD = models.Discriminator(ngpu).to(device)
     #netD = naiveresnet.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
-netD.apply(weights_init)
+netD.apply(models.weights_init)
 if opt.netD != '':
     netD.load_state_dict(torch.load(opt.netD))
 print(netD)
