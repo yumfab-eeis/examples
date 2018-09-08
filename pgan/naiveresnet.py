@@ -214,13 +214,13 @@ def noiseresnet152(nchannels, nfilters, nclasses, pool=7, level=0.1):
     return NoiseResNet(NoiseBottleneck, [3,8,36,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, pool=pool, level=level)
 
 def noiseresgenerator18(nchannels, nfilters, nclasses, level=0.1):
-    return NoiseResNet(NoiseBasicBlock, [2,2,2,2], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
+    return NoiseResGenetator(NoiseNoPoolBlock, [2,2,2,2], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
 
 def noiseresgenerator34(nchannels, nfilters, nclasses, level=0.1):
-    return NoiseResNet(NoiseBasicBlock, [3,4,6,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
+    return NoiseResGenetator(NoiseNoPoolBlock, [3,4,6,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
 
 def noiseresgenerator101(nchannels, nfilters, nclasses, level=0.1):
-    return NoiseResNet(NoiseBasicBlock, [3,4,23,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
+    return NoiseResGenetator(NoiseNoPoolBlock, [3,4,23,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
 
 def noiseresgenerator152(nchannels, nfilters, nclasses, level=0.1):
-    return NoiseResNet(NoiseBasicBlock, [3,8,36,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
+    return NoiseResGenetator(NoiseNoPoolBlock, [3,8,36,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
