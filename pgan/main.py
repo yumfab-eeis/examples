@@ -94,12 +94,12 @@ ngpu = int(opt.ngpu)
 nz = int(opt.nz)
 ngf = int(opt.ngf)
 ndf = int(opt.ndf)
-nc = 3 #number of class
+nc = 3 #number of channel
 
 if opt.activatePG:
     print ('activate Generator with PNN...')
     #netG = P_Generator(ngpu).to(device)
-    netG = models.noiseresgenerator18(nchannels=3, nfilters=128, nclasses=1)
+    netG = models.noiseresgenerator76(nchannels=3, nfilters=opt.nz, nclasses=1)
 else:
     print ('activate Generator with CNN...')
     netG = models.Generator(ngpu, nz, ngf, nc).to(device)
