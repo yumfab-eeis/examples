@@ -177,7 +177,7 @@ class Discriminator(nn.Module):
 
 
 class NoiseLayer(nn.Module):
-    def __init__(self, in_planes, out_planes, level):
+    def __init__(self, in_planes, out_planes, level, nzw):
         super(NoiseLayer, self).__init__()
         #self.noise = nn.Parameter(torch.Tensor(0), requires_grad=False).to(device)
         self.noise = torch.randn(1,in_planes,1,1)
@@ -372,18 +372,25 @@ class NoiseResGenetator(nn.Module):
 
     def forward(self, x):
         x1 = x # (64, nz,1,1)
+        print ('x2')
         x2 = self.layer1(x1) # (64, 8*ngf, 1, 1)
         x3 = self.upsample(x2) # (64, 8*ngf, 2, 2)
+        print ('x4')
         x4 = self.layer2(x3) # (64, 8*ngf, 2, 2)
         x5 = self.upsample(x4) # (64, 4*ngf, 4, 4)
+        print ('x6')
         x6 = self.layer3(x5) # (64, 4*ngf, 4, 4)
         x7 = self.upsample(x6) # (64, 4*ngf, 8, 8)
+        print ('x8')
         x8 = self.layer4(x7) # (64, 4*ngf, 8, 8)
         x9 = self.upsample(x8) # (64, 2*ngf, 16, 16)
+        print ('x10')
         x10 = self.layer5(x9) # (64, 2*ngf, 16, 16)
         x11 = self.upsample(x10)# (64, ngf, 32, 32)
+        print ('x12')
         x12 = self.layer6(x11)# (64, ngf, 32, 32)
         x13 = self.upsample(x12)# (64, nc, 64, 64)
+        print ('x14')
         x14 = self.layer7(x13)# (64, nc, 64, 64)
         x15 = self.tanh(x14) # (64, nc, 64, 64)
         return x15
