@@ -203,10 +203,12 @@ class NoiseLayer(nn.Module):
             self.noise.resize_(x.data[0].shape).uniform_()
             self.noise = (2 * self.noise - 1) * self.level
 
-        print (x.data.shape)
-        print (self.noise.shape)
+        print ('input:',x.data.shape)
+        print ('noise:',self.noise.shape)
         y = torch.add(x, self.noise)
+        print ('afadd:',y.data.shape)
         z = self.layers(y)
+        print ('outpt:',z.data.shape,'\n')
         return z
 
 class NoiseBasicBlock(nn.Module):
