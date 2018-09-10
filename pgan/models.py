@@ -19,9 +19,7 @@ if torch.cuda.is_available():
 else:
     device = torch.device("cpu")
 
-torch.set_default_tensor_type('torch.cuda.FloatTensor')
-
-torch.set_default_tensor_type('torch.cuda.FloatTensor')
+#torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 def weights_init(m):
     classname = m.__class__.__name__
