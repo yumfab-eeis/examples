@@ -56,8 +56,6 @@ class NoiseTranpose2d(nn.Module):
             self.noise = (2*torch.rand(x.data.shape)-1)*self.level
             self.noise = self.noise.cuda()
 
-        print (x.data.shape)
-        print (self.noise.shape)
         x.data = x.data + self.noise
         x = self.layers(x)
         return x
