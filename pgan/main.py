@@ -110,7 +110,7 @@ else:
 if opt.activatePG:
     print ('activate Generator with PNN...')
     #netG = models.P_Generator(ngpu, nz, ngf, nc).to(device)
-    netG = models.noiseresgenerator101(nchannels=3, nfilters=opt.nz, nclasses=1)
+    netG = models.noiseresgenerator101(nchannels=nc, nfilters=opt.nz, nclasses=1)
 else:
     print ('activate Generator with CNN...')
     netG = models.Generator(ngpu, nz, ngf, nc).to(device)
@@ -122,7 +122,7 @@ print(netG)
 
 if opt.activatePD:
     print ('activate Discriminator with PNN...')
-    netD = models.noiseresnet18(nchannels=3, nfilters=128, nclasses=1 , pool=2)
+    netD = models.noiseresnet18(nchannels=nc, nfilters=128, nclasses=1 , pool=2)
 else:
     print ('activate Discriminator with CNN...')
     netD = models.Discriminator(ngpu, nz, ndf, nc).to(device)
