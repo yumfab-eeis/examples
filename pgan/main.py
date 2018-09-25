@@ -85,6 +85,14 @@ elif opt.dataset == 'cifar10':
 elif opt.dataset == 'fake':
     dataset = dset.FakeData(image_size=(3, opt.imageSize, opt.imageSize),
                             transform=transforms.ToTensor())
+elif opt.dataset == 'mnist':
+    dataset = dset.MNIST(root=opt.dataroot, train=True, download=True,
+                        transform=transforms.Compose([
+                            transforms.Resize(opt.imageSize),
+                            transforms.CenterCrop(opt.imageSize),
+                            transforms.ToTensor(),
+                            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                        ]))
 assert dataset
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.batchSize,
                                          shuffle=True, num_workers=int(opt.workers))
@@ -94,7 +102,10 @@ ngpu = int(opt.ngpu)
 nz = int(opt.nz)
 ngf = int(opt.ngf)
 ndf = int(opt.ndf)
-nc = 3 #number of channel
+if opt.dataset == 'mnist':
+    nc = 1
+else:
+    nc = 3
 
 if opt.activatePG:
     print ('activate Generator with PNN...')
