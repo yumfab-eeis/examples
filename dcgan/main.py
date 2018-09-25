@@ -14,7 +14,7 @@ import torchvision.utils as vutils
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', required=True, help='cifar10 | lsun | imagenet | folder | lfw | fake')
+parser.add_argument('--dataset', required=True, help='cifar10 | lsun | imagenet | folder | lfw | fake | mnist')
 parser.add_argument('--dataroot', required=True, help='path to dataset')
 parser.add_argument('--workers', type=int, help='number of data loading workers', default=2)
 parser.add_argument('--batchSize', type=int, default=64, help='input batch size')
@@ -78,6 +78,14 @@ elif opt.dataset == 'cifar10':
 elif opt.dataset == 'fake':
     dataset = dset.FakeData(image_size=(3, opt.imageSize, opt.imageSize),
                             transform=transforms.ToTensor())
+elif opt.dataset == 'mnist':
+    dataset = dset.MNIST(root=opt.dataroot, train=True, download=True,
+                        transform=transforms.Compose([
+                            transforms.Resize(opt.imageSize),
+                            transforms.CenterCrop(opt.imageSize),
+                            transforms.ToTensor(),
+                            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                        ]))
 assert dataset
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.batchSize,
                                          shuffle=True, num_workers=int(opt.workers))
@@ -87,7 +95,10 @@ ngpu = int(opt.ngpu)
 nz = int(opt.nz)
 ngf = int(opt.ngf)
 ndf = int(opt.ndf)
-nc = 3
+if opt.dataset == 'mnist':
+    nc = 1
+else:
+    nc = 3
 
 
 # custom weights initialization called on netG and netD
