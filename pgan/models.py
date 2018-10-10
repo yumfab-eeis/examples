@@ -366,17 +366,20 @@ class NoiseResGenetator(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        x1 = self.pre_layers(x) # (64, nz,4,4)
-        x2 = self.layer1(x1) # (64, 4*ngf, 4, 4)
-        x3 = self.upsample(x2) # (64, 4*ngf, 8, 8)
-        x4 = self.layer2(x3) # (64, 4*ngf, 8, 8)
-        x5 = self.upsample(x4) # (64, 4*ngf, 16, 16)
-        x6 = self.layer3(x5) # (64, 2*ngf, 16, 16)
-        x7 = self.upsample(x6)# (64, 2*ngf, 32, 32)
-        x8 = self.layer4(x7)# (64, ngf, 32, 32)
-        x9 = self.upsample(x8)# (64, ngf, 64, 64)
-        x10 = self.layer5(x9)# (64, nc, 64, 64)
-        x11 = self.tanh(x10) # (64, nc, 64, 64)
+        x1 = self.pre_layers(x) # (bs, nz, 1, 1) -> (bs, 8*nf, 4, 4)
+        x2 = self.layer1(x1) # (bs, 8*nf, 4, 4) -> (bs, 8*nf, 4, 4)
+        x3 = self.upsample(x2) # (bs, 8*nf, 4, 4) -> (bs, 8*nf, 8, 8)
+        x4 = self.layer2(x3) # (bs, 8*nf, 8, 8) -> (bs, 4*nf, 8, 8)
+        x5 = self.upsample(x4) # (bs, 4*nf, 8, 8) -> (bs, 4*nf, 16, 16)
+        x6 = self.layer3(x5) # (bs, 4*nf, 16, 16) -> (bs, 2*nf, 16, 16)
+        x7 = self.upsample(x6) # (bs, 2*nf, 16, 16) -> (bs, 2*nf, 32, 32)
+        x8 = self.layer4(x7) # (bs, 2*nf, 32, 32) -> (bs, 1*nf, 32, 32)
+        x9 = self.upsample(x8) # (bs, 1*nf, 32, 32) -> (bs, 1*nf, 64, 64)
+        x10 = self.layer5(x9) # (bs, 1*nf, 64, 64) -> (bs, nc, 64, 64)
+        x11 = self.tanh(x10) # (bs, nc, 64, 64) -> (bs, nc, 64, 64)
+        print ('x:',x.size())
+        print ('x1:',x1.size())
+        print ('x2:',x2.size())
         return x11
 
 def noiseresnet18(nchannels, nfilters, nclasses, pool=7, level=0.1):
