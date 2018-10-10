@@ -339,30 +339,31 @@ class NoiseResGenetator(nn.Module):
             nn.BatchNorm2d(8*nfilters),
             nn.ReLU(True),
         )
-        self.layer1 = self._make_layer(block, 8*nfilters, nblocks[0], level=level)
-        self.layer2 = self._make_layer(block, 4*nfilters, nblocks[1], level=level)
-        self.layer3 = self._make_layer(block, 2*nfilters, nblocks[2], level=level)
-        self.layer4 = self._make_layer(block, 1*nfilters, nblocks[3], level=level)
-        self.layer5 = self._make_layer(block, nchannels, nblocks[4], level=level, isLastBN=False)
+        self.layer1 = self._make_layer(block, 8*nfilters, 8*nfilters, nblocks[0], level=level)
+        self.layer2 = self._make_layer(block, 8*nfilters, 4*nfilters, nblocks[1], level=level)
+        self.layer3 = self._make_layer(block, 4*nfilters, 2*nfilters, nblocks[2], level=level)
+        self.layer4 = self._make_layer(block, 2*nfilters, 1*nfilters, nblocks[3], level=level)
+        self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=level, isLastBN=False)
         self.upsample = nn.Upsample(scale_factor=2, mode='nearest')
         self.tanh = nn.Tanh()
 
-    def _make_layer(self, block, planes, nblocks, stride=1, level=0.2, isLastBN=True):
+    def _make_layer(self, block, in_planes, planes, nblocks, stride=1, level=0.2, isLastBN=True):
         shortcut = None
-        if stride != 1 or self.in_planes != planes * block.expansion:
+        #memo: changed self.in_planes -> in_planes
+        if stride != 1 or in_planes != planes * block.expansion:
             shortcut = nn.Sequential(
-                nn.Conv2d(self.in_planes, planes * block.expansion,
+                nn.Conv2d(in_planes, planes * block.expansion,
                           kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(planes * block.expansion),
             )
         layers = []
-        layers.append(block(self.in_planes, planes, stride, shortcut, level=level))
-        self.in_planes = planes * block.expansion
+        layers.append(block(in_planes, planes, stride, shortcut, level=level))
+        in_planes = planes * block.expansion
         for i in range(1, nblocks):
             if i == nblocks and isLastBN == False:
-                layers.append(block(self.in_planes, planes, level=level, isLastBN=isLastBN))
+                layers.append(block(in_planes, planes, level=level, isLastBN=isLastBN))
             else:
-                layers.append(block(self.in_planes, planes, level=level))
+                layers.append(block(in_planes, planes, level=level))
         return nn.Sequential(*layers)
 
     def forward(self, x):
