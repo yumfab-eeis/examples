@@ -399,7 +399,7 @@ def noiseresgenerator76(nchannels, nfilters, nclasses, level=0.1):
     return NoiseResGenetator(NoiseNoPoolBlock, [3,4,6,8,10,12,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
 
 def noiseresgenerator101(nchannels, nfilters, nclasses, level=0.7):
-    return NoiseResGenetator(NoiseNoPoolBlock, [3,2,2,8,8], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
+    return NoiseResGenetator(NoiseNoPoolBlock, [4,2,2,2,8], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
 
 def noiseresgenerator152(nchannels, nfilters, nclasses, level=0.1):
     return NoiseResGenetator(NoiseNoPoolBlock, [3,8,36,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
