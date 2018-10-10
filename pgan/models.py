@@ -336,7 +336,7 @@ class NoiseResGenetator(nn.Module):
         self.in_planes = nfilters
         self.pre_layers = nn.Sequential(
             nn.ConvTranspose2d(  self.in_planes, 128*nfilters, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(64*nfilters),
+            nn.BatchNorm2d(128*nfilters),
             nn.ReLU(True),
         )
         self.layer1 = self._make_layer(block, 128*nfilters, 32*nfilters, nblocks[0], level=level)
