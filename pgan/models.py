@@ -367,7 +367,10 @@ class NoiseResGenetator(nn.Module):
 
     def forward(self, x):
         x1 = self.pre_layers(x) # (bs, nz, 1, 1) -> (bs, 8*nf, 4, 4)
+        print ('x:',x.size())
+        print ('x1:',x1.size())
         x2 = self.layer1(x1) # (bs, 8*nf, 4, 4) -> (bs, 8*nf, 4, 4)
+        print ('x2:',x2.size())
         x3 = self.upsample(x2) # (bs, 8*nf, 4, 4) -> (bs, 8*nf, 8, 8)
         x4 = self.layer2(x3) # (bs, 8*nf, 8, 8) -> (bs, 4*nf, 8, 8)
         x5 = self.upsample(x4) # (bs, 4*nf, 8, 8) -> (bs, 4*nf, 16, 16)
@@ -377,9 +380,6 @@ class NoiseResGenetator(nn.Module):
         x9 = self.upsample(x8) # (bs, 1*nf, 32, 32) -> (bs, 1*nf, 64, 64)
         x10 = self.layer5(x9) # (bs, 1*nf, 64, 64) -> (bs, nc, 64, 64)
         x11 = self.tanh(x10) # (bs, nc, 64, 64) -> (bs, nc, 64, 64)
-        print ('x:',x.size())
-        print ('x1:',x1.size())
-        print ('x2:',x2.size())
         return x11
 
 def noiseresnet18(nchannels, nfilters, nclasses, pool=7, level=0.1):
