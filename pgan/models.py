@@ -335,14 +335,14 @@ class NoiseResGenetator(nn.Module):
         super(NoiseResGenetator, self).__init__()
         self.in_planes = nfilters
         self.pre_layers = nn.Sequential(
-            nn.ConvTranspose2d(  self.in_planes, 4*nfilters, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(4*nfilters),
+            nn.ConvTranspose2d(  self.in_planes, 32*nfilters, 4, 1, 0, bias=False),
+            nn.BatchNorm2d(32*nfilters),
             nn.ReLU(True),
         )
-        self.layer1 = self._make_layer(block, 4*nfilters, 4*nfilters, nblocks[0], level=level)
-        self.layer2 = self._make_layer(block, 4*nfilters, 8*nfilters, nblocks[1], level=level)
-        self.layer3 = self._make_layer(block, 8*nfilters, 8*nfilters, nblocks[2], level=level)
-        self.layer4 = self._make_layer(block, 8*nfilters, 1*nfilters, nblocks[3], level=level)
+        self.layer1 = self._make_layer(block, 32*nfilters, 16*nfilters, nblocks[0], level=level)
+        self.layer2 = self._make_layer(block, 16*nfilters, 8*nfilters, nblocks[1], level=level)
+        self.layer3 = self._make_layer(block, 8*nfilters, 4*nfilters, nblocks[2], level=level)
+        self.layer4 = self._make_layer(block, 4*nfilters, 1*nfilters, nblocks[3], level=level)
         self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=level, isLastBN=False)
         self.upsample = nn.Upsample(scale_factor=2, mode='nearest')
         self.tanh = nn.Tanh()
@@ -398,7 +398,7 @@ def noiseresgenerator26(nchannels, nfilters, nclasses, level=0.1):
 def noiseresgenerator76(nchannels, nfilters, nclasses, level=0.1):
     return NoiseResGenetator(NoiseNoPoolBlock, [3,4,6,8,10,12,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
 
-def noiseresgenerator101(nchannels, nfilters, nclasses, level=255):
+def noiseresgenerator101(nchannels, nfilters, nclasses, level=0.6):
     return NoiseResGenetator(NoiseNoPoolBlock, [4,2,2,2,8], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
 
 def noiseresgenerator152(nchannels, nfilters, nclasses, level=0.1):
