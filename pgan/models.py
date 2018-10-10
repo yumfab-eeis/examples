@@ -368,10 +368,7 @@ class NoiseResGenetator(nn.Module):
 
     def forward(self, x):
         x1 = self.pre_layers(x) # (bs, nz, 1, 1) -> (bs, 8*nf, 4, 4)
-        print ('x:',x.size())
-        print ('x1:',x1.size())
         x2 = self.layer1(x1) # (bs, 8*nf, 4, 4) -> (bs, 8*nf, 4, 4)
-        print ('x2:',x2.size())
         x3 = self.upsample(x2) # (bs, 8*nf, 4, 4) -> (bs, 8*nf, 8, 8)
         x4 = self.layer2(x3) # (bs, 8*nf, 8, 8) -> (bs, 4*nf, 8, 8)
         x5 = self.upsample(x4) # (bs, 4*nf, 8, 8) -> (bs, 4*nf, 16, 16)
