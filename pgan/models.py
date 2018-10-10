@@ -360,7 +360,7 @@ class NoiseResGenetator(nn.Module):
         self.in_planes = planes * block.expansion
         for i in range(1, nblocks):
             if i == nblocks and isLastBN == False:
-                layers.append(block(self.in_planes, planes, level=level, isLastBN=False))
+                layers.append(block(self.in_planes, planes, level=level, isLastBN))
             else:
                 layers.append(block(self.in_planes, planes, level=level))
         return nn.Sequential(*layers)
