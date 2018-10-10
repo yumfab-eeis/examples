@@ -366,7 +366,7 @@ class NoiseResGenetator(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        x1 = pre_layers(x) # (64, nz,4,4)
+        x1 = self.pre_layers(x) # (64, nz,4,4)
         x2 = self.layer1(x1) # (64, 4*ngf, 4, 4)
         x3 = self.upsample(x2) # (64, 4*ngf, 8, 8)
         x4 = self.layer2(x3) # (64, 4*ngf, 8, 8)
