@@ -303,7 +303,7 @@ class NoiseResNet(nn.Module):
 
 class NoiseGenetator(nn.Module):
     def __init__(self, block, nblocks, nchannels, nfilters, nclasses, level):
-        super(NoiseResGenetator, self).__init__()
+        super(NoiseGenetator, self).__init__()
         #memo: changed self.in_planes -> in_planes
         self.in_planes = nfilters
         self.pre_layers = nn.Sequential(
