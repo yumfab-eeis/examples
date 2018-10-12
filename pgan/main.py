@@ -110,7 +110,7 @@ else:
 if opt.activatePG:
     print ('activate Generator with PNN...')
     #netG = models.P_Generator(ngpu, nz, ngf, nc).to(device)
-    netG = models.noisegenerator101(nchannels=nc, nfilters=opt.nz, nclasses=1)
+    netG = models.noiseresgenerator101(nchannels=nc, nfilters=opt.nz, nclasses=1)
 else:
     print ('activate Generator with CNN...')
     netG = models.Generator(ngpu, nz, ngf, nc).to(device)
