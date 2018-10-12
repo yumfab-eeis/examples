@@ -138,6 +138,8 @@ fixed_noise = torch.randn(opt.batchSize, nz, 1, 1, device=device)
 real_label = 1
 fake_label = 0
 
+print (filter(lambda p: p.requires_grad,netG.parameters())
+
 # setup optimizer
 if opt.activatePG:
     optimizerG = optim.Adam(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lr, betas=(opt.beta1, 0.999))
