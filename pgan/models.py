@@ -228,26 +228,16 @@ class NoiseBasicBlock(nn.Module):
 
 class NoiseNoPoolBlock(nn.Module):
     expansion = 1
-    def __init__(self, in_planes, planes, stride=1, shortcut=None, level=0.2, isLastBN=True):
+    def __init__(self, in_planes, planes, stride=1, shortcut=None, level=0.2):
         super(NoiseNoPoolBlock, self).__init__()
-        if isLastBN:
-            self.layers = nn.Sequential(
-                NoiseLayer(in_planes, planes, level),
-                #nn.MaxPool2d(stride, stride),
-                # nn.BatchNorm2d(planes),
-                # nn.ReLU(True),
-                NoiseLayer(planes, planes, level),
-                #nn.BatchNorm2d(planes),
-            )
-        else:
-            self.layers = nn.Sequential(
-                NoiseLayer(in_planes, planes, level),
-                #nn.MaxPool2d(stride, stride),
-                # nn.BatchNorm2d(planes),
-                # nn.ReLU(True),
-                NoiseLayer(planes, planes, level),
-                #nn.BatchNorm2d(planes),
-            )
+        self.layers = nn.Sequential(
+            NoiseLayer(in_planes, planes, level),
+            #nn.MaxPool2d(stride, stride),
+            # nn.BatchNorm2d(planes),
+            # nn.ReLU(True),
+            NoiseLayer(planes, planes, level),
+            #nn.BatchNorm2d(planes),
+        )
         self.shortcut = shortcut
 
     def forward(self, x):
@@ -335,19 +325,19 @@ class NoiseResGenetator(nn.Module):
         super(NoiseResGenetator, self).__init__()
         self.in_planes = nfilters
         self.pre_layers = nn.Sequential(
-            nn.ConvTranspose2d(  self.in_planes, 64*nfilters, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(64*nfilters),
+            nn.ConvTranspose2d(  self.in_planes, 128*nfilters, 4, 1, 0, bias=False),
+            nn.BatchNorm2d(128*nfilters),
             nn.ReLU(True),
         )
         self.layer1 = self._make_layer(block, 64*nfilters, 64*nfilters, nblocks[0], level=level)
         self.layer2 = self._make_layer(block, 64*nfilters, 16*nfilters, nblocks[1], level=level)
         self.layer3 = self._make_layer(block, 16*nfilters, 4*nfilters, nblocks[2], level=level)
         self.layer4 = self._make_layer(block, 4*nfilters, 1*nfilters, nblocks[3], level=level)
-        self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=level, isLastBN=False)
+        self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=level)
         self.upsample = nn.Upsample(scale_factor=2, mode='nearest')
         self.tanh = nn.Tanh()
 
-    def _make_layer(self, block, in_planes, planes, nblocks, stride=1, level=0.2, isLastBN=True):
+    def _make_layer(self, block, in_planes, planes, nblocks, stride=1, level=0.2):
         shortcut = None
         #memo: changed self.in_planes -> in_planes
         if stride != 1 or in_planes != planes * block.expansion:
@@ -360,8 +350,8 @@ class NoiseResGenetator(nn.Module):
         layers.append(block(in_planes, planes, stride, shortcut, level=level))
         in_planes = planes * block.expansion
         for i in range(1, nblocks):
-            if i == nblocks and isLastBN == False:
-                layers.append(block(in_planes, planes, level=level, isLastBN=isLastBN))
+            if i == nblocks:
+                layers.append(block(in_planes, planes, level=level))
             else:
                 layers.append(block(in_planes, planes, level=level))
         return nn.Sequential(*layers)
