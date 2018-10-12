@@ -329,7 +329,7 @@ class NoiseResGenetator(nn.Module):
             nn.BatchNorm2d(128*nfilters),
             nn.ReLU(True),
         )
-        self.layer1 = self._make_layer(block, 64*nfilters, 64*nfilters, nblocks[0], level=level)
+        self.layer1 = self._make_layer(block, 128*nfilters, 64*nfilters, nblocks[0], level=level)
         self.layer2 = self._make_layer(block, 64*nfilters, 16*nfilters, nblocks[1], level=level)
         self.layer3 = self._make_layer(block, 16*nfilters, 4*nfilters, nblocks[2], level=level)
         self.layer4 = self._make_layer(block, 4*nfilters, 1*nfilters, nblocks[3], level=level)
