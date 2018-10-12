@@ -118,7 +118,7 @@ netG = netG.cuda()
 netG.apply(models.weights_init)
 if opt.netG != '':
     netG.load_state_dict(torch.load(opt.netG))
-print(netG)
+#print(netG)
 
 if opt.activatePD:
     print ('activate Discriminator with PNN...')
@@ -130,7 +130,7 @@ else:
 netD.apply(models.weights_init)
 if opt.netD != '':
     netD.load_state_dict(torch.load(opt.netD))
-print(netD)
+#print(netD)
 
 criterion = nn.BCELoss()
 
@@ -138,7 +138,7 @@ fixed_noise = torch.randn(opt.batchSize, nz, 1, 1, device=device)
 real_label = 1
 fake_label = 0
 
-print ('update parameters:',filter(lambda p: p.requires_grad,netG.parameters()))
+print ('update parameters:',list(filter(lambda p: p.requires_grad,netG.parameters())))
 
 # setup optimizer
 if opt.activatePG:
