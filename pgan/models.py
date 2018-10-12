@@ -234,17 +234,17 @@ class NoiseNoPoolBlock(nn.Module):
             self.layers = nn.Sequential(
                 NoiseLayer(in_planes, planes, level),
                 #nn.MaxPool2d(stride, stride),
-                nn.BatchNorm2d(planes),
-                nn.ReLU(True),
+                # nn.BatchNorm2d(planes),
+                # nn.ReLU(True),
                 NoiseLayer(planes, planes, level),
-                nn.BatchNorm2d(planes),
+                #nn.BatchNorm2d(planes),
             )
         else:
             self.layers = nn.Sequential(
                 NoiseLayer(in_planes, planes, level),
                 #nn.MaxPool2d(stride, stride),
-                nn.BatchNorm2d(planes),
-                nn.ReLU(True),
+                # nn.BatchNorm2d(planes),
+                # nn.ReLU(True),
                 NoiseLayer(planes, planes, level),
                 #nn.BatchNorm2d(planes),
             )
