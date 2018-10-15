@@ -174,8 +174,6 @@ for epoch in range(opt.niter):
             noise = torch.randn(batch_size, nz, 1, 1, device=device)
             fake = netG(noise)
             label.fill_(fake_label)
-            print (fake.size())
-            print (fake.detach().size())
             output = netD(fake.detach())
             errD_fake = criterion(output, label)
             errD_fake.backward()
