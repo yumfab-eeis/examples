@@ -384,10 +384,7 @@ class NoiseResGenetator(nn.Module):
         layers.append(block(in_planes, planes, stride, shortcut, level=level))
         in_planes = planes * block.expansion
         for i in range(1, nblocks):
-            if i == nblocks:
-                layers.append(block(in_planes, planes, level=level))
-            else:
-                layers.append(block(in_planes, planes, level=level))
+            layers.append(block(in_planes, planes, level=level))
         return nn.Sequential(*layers)
 
     def forward(self, x):
