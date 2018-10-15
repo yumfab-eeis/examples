@@ -323,7 +323,7 @@ class NoiseGenetator(nn.Module):
         layers = []
         layers.append(block(in_planes, out_planes, stride, level=level))
         for i in range(1, nblocks):
-            layers.append(block(in_planes, out_planes, level=level))
+            layers.append(block(out_planes, out_planes, level=level))
         return nn.Sequential(*layers)
 
     def forward(self, x):
@@ -338,18 +338,6 @@ class NoiseGenetator(nn.Module):
         x9 = self.upsample(x8) # (bs, 1*nf, 32, 32) -> (bs, 1*nf, 64, 64)
         x10 = self.layer5(x9) # (bs, 1*nf, 64, 64) -> (bs, nc, 64, 64)
         x11 = self.tanh(x10) # (bs, nc, 64, 64) -> (bs, nc, 64, 64)
-        self.print_func(x)
-        self.print_func(x1)
-        self.print_func(x2)
-        self.print_func(x3)
-        self.print_func(x4)
-        self.print_func(x5)
-        self.print_func(x6)
-        self.print_func(x7)
-        self.print_func(x8)
-        self.print_func(x9)
-        self.print_func(x10)
-        self.print_func(x11)
         return x11
 
     def print_func(self, x):
@@ -400,18 +388,6 @@ class NoiseResGenetator(nn.Module):
         x9 = self.upsample(x8) # (bs, 1*nf, 32, 32) -> (bs, 1*nf, 64, 64)
         x10 = self.layer5(x9) # (bs, 1*nf, 64, 64) -> (bs, nc, 64, 64)
         x11 = self.tanh(x10) # (bs, nc, 64, 64) -> (bs, nc, 64, 64)
-        self.print_func(x)
-        self.print_func(x1)
-        self.print_func(x2)
-        self.print_func(x3)
-        self.print_func(x4)
-        self.print_func(x5)
-        self.print_func(x6)
-        self.print_func(x7)
-        self.print_func(x8)
-        self.print_func(x9)
-        self.print_func(x10)
-        self.print_func(x11)
         return x11
 
     def print_func(self, x):
