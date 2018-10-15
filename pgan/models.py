@@ -321,6 +321,7 @@ class NoiseGenetator(nn.Module):
 
     def _make_layer(self, block, in_planes, out_planes, nblocks, stride=1, level=0.2):
         layers = []
+        layers.append(block(in_planes, planes, stride, shortcut, level=level))
         for i in range(1, nblocks):
             layers.append(block(in_planes, planes, level=level))
         return nn.Sequential(*layers)
