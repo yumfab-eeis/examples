@@ -27,6 +27,8 @@ parser.add_argument('--ngf', type=int, default=64)
 parser.add_argument('--ndf', type=int, default=64)
 parser.add_argument('--niter', type=int, default=25, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.0002, help='learning rate, default=0.0002')
+parser.add_argument('--lrG', type=float, default=0.0002, help='learning rate, default=0.0002')
+parser.add_argument('--lrD', type=float, default=0.0002, help='learning rate, default=0.0002')
 parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. default=0.5')
 parser.add_argument('--cuda', action='store_true', help='enables cuda')
 parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use')
@@ -142,14 +144,14 @@ fake_label = 0
 
 # setup optimizer
 if opt.activatePG:
-    optimizerG = optim.Adam(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lr, betas=(opt.beta1, 0.999))
+    optimizerG = optim.Adam(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lrG, betas=(opt.beta1, 0.999))
 else:
-    optimizerG = optim.Adam(netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+    optimizerG = optim.Adam(netG.parameters(), lr=opt.lrG, betas=(opt.beta1, 0.999))
 
 if opt.activatePD:
-    optimizerD = optim.Adam(filter(lambda p: p.requires_grad,netD.parameters()), lr=opt.lr, betas=(opt.beta1, 0.999))
+    optimizerD = optim.Adam(filter(lambda p: p.requires_grad,netD.parameters()), lr=opt.lrD, betas=(opt.beta1, 0.999))
 else:
-    optimizerD = optim.Adam(netD.parameters(), lr=0.00005, betas=(opt.beta1, 0.999))
+    optimizerD = optim.Adam(netD.parameters(), lr=opt.lrD, betas=(opt.beta1, 0.999))
 
 for epoch in range(opt.niter):
     for i, data in enumerate(dataloader, 0):
