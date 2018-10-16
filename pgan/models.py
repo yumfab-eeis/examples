@@ -162,7 +162,6 @@ class Discriminator(nn.Module):
             nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Dropout(0.2),
-            nn.
             nn.Sigmoid()
         )
 
