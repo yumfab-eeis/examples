@@ -175,7 +175,7 @@ class Discriminator(nn.Module):
             output = self.main(input)
 
         #return output.view(-1, 1).squeeze(1)
-        return output.view(-1, 1).squeeze(1)
+        return output
 
 
 class NoiseLayer(nn.Module):
