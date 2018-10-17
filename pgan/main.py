@@ -144,12 +144,12 @@ fake_label = 0
 
 # setup optimizer
 if opt.activatePG:
-    optimizerG = optim.Adam(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lrG, betas=(opt.beta1, 0.999))
+    optimizerG = optim.Adam(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lrG, betas=(opt.beta1, 0.999), weight_decay=1e-8)
 else:
     optimizerG = optim.Adam(netG.parameters(), lr=opt.lrG, betas=(opt.beta1, 0.999))
 
 if opt.activatePD:
-    optimizerD = optim.Adam(filter(lambda p: p.requires_grad,netD.parameters()), lr=opt.lrD, betas=(opt.beta1, 0.999))
+    optimizerD = optim.Adam(filter(lambda p: p.requires_grad,netD.parameters()), lr=opt.lrD, betas=(opt.beta1, 0.999), weight_decay=1e-8)
 else:
     optimizerD = optim.Adam(netD.parameters(), lr=opt.lrD, betas=(opt.beta1, 0.999))
 
