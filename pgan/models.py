@@ -162,6 +162,8 @@ class Discriminator(nn.Module):
             nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Dropout(0.1),
+            nn.AvgPool2d(kernel_size=4),
+            nn.Linear(ndf * 8, 1)
             nn.Sigmoid()
         )
 
@@ -171,6 +173,7 @@ class Discriminator(nn.Module):
         else:
             output = self.main(input)
 
+        #return output.view(-1, 1).squeeze(1)
         return output.view(-1, 1).squeeze(1)
 
 
