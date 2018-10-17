@@ -164,7 +164,7 @@ class Discriminator(nn.Module):
             # nn.LeakyReLU(0.2, inplace=True),
             # nn.Dropout(self.do_val),
             nn.AvgPool2d(kernel_size=4),
-            nn.Linear(ndf * 8, 1),
+            nn.Linear(ndf * 4, 1),
             nn.Sigmoid()
         )
 
