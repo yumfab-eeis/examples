@@ -163,6 +163,8 @@ class Discriminator(nn.Module):
             # nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
             # nn.LeakyReLU(0.2, inplace=True),
             # nn.Dropout(self.do_val),
+        )
+        self.post_layers = nn.Sequential(
             nn.AvgPool2d(kernel_size=4),
             nn.Linear(ndf * 4, 1),
             nn.Sigmoid()
@@ -173,6 +175,7 @@ class Discriminator(nn.Module):
             output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
         else:
             output = self.main(input)
+            output = self.post_layers(input.view(-1,1))
 
         #return output.view(-1, 1).squeeze(1)
         return output
