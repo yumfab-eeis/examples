@@ -160,10 +160,10 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.2, inplace=True),
             nn.Dropout(self.do_val),
             # state size. (ndf*8) x 4 x 4
-            # nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
+            nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
             # nn.LeakyReLU(0.2, inplace=True),
             # nn.Dropout(self.do_val),
-            nn.AvgPool2d(kernel_size=4)
+            #nn.AvgPool2d(kernel_size=4)
         )
         self.post_layers = nn.Sequential(
             nn.Linear(ndf * 4, 1),
@@ -176,11 +176,11 @@ class Discriminator(nn.Module):
         else:
             output = self.main(input)
             print (output.size())
-            print (output.t().size())
-            output = self.post_layers(output.t())
+            print (output.view(-1, 1).squeeze(1).size())
+            # output = self.post_layers(output.t())
 
-        #return output.view(-1, 1).squeeze(1)
-        return output
+        return output.view(-1, 1).squeeze(1)
+        #return output
 
 
 class NoiseLayer(nn.Module):
