@@ -12,6 +12,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
 import torch.nn.functional as F
+from torch.autograd import Variable
 import models
 
 #torch.set_default_tensor_type('torch.cuda.FloatTensor')
