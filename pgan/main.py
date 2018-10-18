@@ -139,9 +139,11 @@ if opt.netD != '':
     netD.load_state_dict(torch.load(opt.netD))
 #print(netD)
 
-criterion = nn.BCELoss()
-
+input = torch.FloatTensor(opt.batchSize, 3, opt.imageSize, opt.imageSize)
+noise = torch.FloatTensor(opt.batchSize, nz, 1, 1)
 fixed_noise = torch.randn(opt.batchSize, nz, 1, 1, device=device)
+one = torch.FloatTensor([1])
+mone = one * -1
 real_label = 1
 fake_label = 0
 
@@ -253,6 +255,7 @@ if opt.activateWGAN:
     # ---WGAN Training End---
 else:
     print ('Algorithm : DCGAN')
+    criterion = nn.BCELoss()
     # ---DCGAN Training---
     for epoch in range(opt.niter):
         for i, data in enumerate(dataloader, 0):
