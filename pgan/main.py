@@ -149,6 +149,13 @@ fake_label = 0
 
 #print ('update parameters:',list(filter(lambda p: p.requires_grad,netG.parameters())))
 
+if opt.cuda:
+    netD.cuda()
+    netG.cuda()
+    input = input.cuda()
+    one, mone = one.cuda(), mone.cuda()
+    noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
+
 # setup optimizer
 if opt.adam:
     print ('optimizer:adam')
