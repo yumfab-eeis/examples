@@ -149,6 +149,7 @@ fake_label = 0
 
 # setup optimizer
 if opt.adam:
+    print ('optimizer:adam')
     if opt.activatePG:
         optimizerG = optim.Adam(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lrG, betas=(opt.beta1, 0.999), weight_decay=1e-8)
     else:
@@ -159,6 +160,7 @@ if opt.adam:
     else:
         optimizerD = optim.Adam(netD.parameters(), lr=opt.lrD, betas=(opt.beta1, 0.999), weight_decay=1e-8)
 else:
+    print ('optimizer:RMSprop')
     if opt.activatePG:
         optimizerG = optim.RMSprop(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lrG)
     else:
@@ -171,6 +173,7 @@ else:
 
 # START TRAINING
 if opt.activateWGAN:
+    print ('Algorithm : WGAN')
     # ---WGAN Training---
     gen_iterations = 0
     for epoch in range(opt.niter):
@@ -249,6 +252,7 @@ if opt.activateWGAN:
                 vutils.save_image(fake.data, '{0}/fake_samples_{1}.png'.format(opt.outf, gen_iterations))
     # ---WGAN Training End---
 else:
+    print ('Algorithm : DCGAN')
     # ---DCGAN Training---
     for epoch in range(opt.niter):
         for i, data in enumerate(dataloader, 0):
