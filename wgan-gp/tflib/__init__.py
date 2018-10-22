@@ -10,13 +10,13 @@ _param_aliases = {}
 def param(name, *args, **kwargs):
     """
     A wrapper for `tf.Variable` which enables parameter sharing in models.
-    
-    Creates and returns theano shared variables similarly to `tf.Variable`, 
-    except if you try to create a param with the same name as a 
-    previously-created one, `param(...)` will just return the old one instead of 
+
+    Creates and returns theano shared variables similarly to `tf.Variable`,
+    except if you try to create a param with the same name as a
+    previously-created one, `param(...)` will just return the old one instead of
     making a new one.
 
-    This constructor also adds a `param` attribute to the shared variables it 
+    This constructor also adds a `param` attribute to the shared variables it
     creates, so that you can easily search a graph for all params.
     """
 
@@ -50,7 +50,7 @@ def delete_param_aliases():
 # def search(node, critereon):
 #     """
 #     Traverse the Theano graph starting at `node` and return a list of all nodes
-#     which match the `critereon` function. When optimizing a cost function, you 
+#     which match the `critereon` function. When optimizing a cost function, you
 #     can use this to get a list of all of the trainable params in the graph, like
 #     so:
 
@@ -99,16 +99,16 @@ def delete_param_aliases():
 #     )
 
 def print_model_settings(locals_):
-    print "Uppercase local vars:"
+    print ("Uppercase local vars:")
     all_vars = [(k,v) for (k,v) in locals_.items() if (k.isupper() and k!='T' and k!='SETTINGS' and k!='ALL_SETTINGS')]
     all_vars = sorted(all_vars, key=lambda x: x[0])
     for var_name, var_value in all_vars:
-        print "\t{}: {}".format(var_name, var_value)
+        print ("\t{}: {}".format(var_name, var_value))
 
 
 def print_model_settings_dict(settings):
-    print "Settings dict:"
+    print ("Settings dict:")
     all_vars = [(k,v) for (k,v) in settings.items()]
     all_vars = sorted(all_vars, key=lambda x: x[0])
     for var_name, var_value in all_vars:
-        print "\t{}: {}".format(var_name, var_value)
+        print ("\t{}: {}".format(var_name, var_value))
