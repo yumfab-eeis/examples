@@ -143,7 +143,8 @@ if opt.netD != '':
 input = torch.FloatTensor(opt.batchSize, 3, opt.imageSize, opt.imageSize)
 noise = torch.FloatTensor(opt.batchSize, nz, 1, 1)
 fixed_noise = torch.randn(opt.batchSize, nz, 1, 1, device=device)
-one = torch.FloatTensor([1])
+#one = torch.FloatTensor([1])
+one = torch.FloatTensor(torch.ones([opt.batchSize, 1]))
 print (one.size())
 mone = one * -1
 real_label = 1
