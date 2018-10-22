@@ -94,8 +94,8 @@ class Discriminator(nn.Module):
 
 netG = Generator()
 netD = Discriminator()
-print netG
-print netD
+print (netG)
+print (netD)
 
 use_cuda = torch.cuda.is_available()
 if use_cuda:
