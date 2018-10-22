@@ -162,7 +162,8 @@ if use_cuda:
 optimizerD = optim.Adam(netD.parameters(), lr=1e-4, betas=(0.5, 0.9))
 optimizerG = optim.Adam(netG.parameters(), lr=1e-4, betas=(0.5, 0.9))
 
-one = torch.FloatTensor([1])
+#one = torch.FloatTensor([1])
+one = torch.tensor(1.0)
 mone = one * -1
 if use_cuda:
     one = one.cuda(gpu)
