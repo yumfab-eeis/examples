@@ -223,8 +223,9 @@ if opt.activateWGAN:
                     real_cpu = real_cpu.cuda()
                 input.resize_as_(real_cpu).copy_(real_cpu)
                 inputv = Variable(input)
-                print (input.size())
-                print (inputv.size())
+                print (inputv.size()[0])
+
+                one = torch.FloatTensor(torch.ones([opt.batchSize]))
                 errD_real = netD(inputv)
                 errD_real.backward(one)
 
