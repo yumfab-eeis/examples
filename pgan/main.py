@@ -144,8 +144,8 @@ input = torch.FloatTensor(opt.batchSize, 3, opt.imageSize, opt.imageSize)
 noise = torch.FloatTensor(opt.batchSize, nz, 1, 1)
 fixed_noise = torch.randn(opt.batchSize, nz, 1, 1, device=device)
 #one = torch.FloatTensor([1])
-one = torch.tensor(1.0)
-#one = torch.FloatTensor(torch.ones([opt.batchSize]))
+#one = torch.tensor(1.0)
+one = torch.FloatTensor(torch.ones([opt.batchSize]))
 mone = one * -1
 real_label = 1
 fake_label = 0
@@ -223,7 +223,8 @@ if opt.activateWGAN:
                     real_cpu = real_cpu.cuda()
                 input.resize_as_(real_cpu).copy_(real_cpu)
                 inputv = Variable(input)
-
+                print (input.size())
+                print (inputv.size())
                 errD_real = netD(inputv)
                 errD_real.backward(one)
 
