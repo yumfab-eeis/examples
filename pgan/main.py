@@ -68,7 +68,7 @@ if opt.outDict is None:
     else:
         dType = "cD"
     opt.outDict = "%s_%s_%s_%s"%(tstr, algorithm, opt.dataset, gType+dType)
-
+    print (opt.outDict)
 try:
     os.makedirs(opt.outDict)
     print ("saving results to %s"%opt.outDict)
