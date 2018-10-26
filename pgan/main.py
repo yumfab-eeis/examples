@@ -52,7 +52,7 @@ opt = parser.parse_args()
 print(opt)
 
 tdatetime = dt.now()
-tstr = tdatetime.strftime('%y:%m:%d:%H:%M:%s')
+tstr = tdatetime.strftime('%m:%d:%H:%M')
 
 if opt.outDict is None:
     if opt.wGAN:
@@ -67,8 +67,7 @@ if opt.outDict is None:
         dType = "pD"
     else:
         dType = "cD"
-    opt.outDict = "%s_%s_%s_%s"%(tstr, algorithm, opt.dataset, gType+dType)
-    print (opt.outDict)
+    opt.outDict = "%s_%s_%s_%s_Diters%d_lrG%f_lrD%f"%(tstr, algorithm, opt.dataset, gType+dType, opt.Diters, opt.lrG, opt.lrD)
 try:
     os.makedirs(opt.outDict)
     print ("saving results to %s"%opt.outDict)
