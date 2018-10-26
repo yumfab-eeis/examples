@@ -258,6 +258,7 @@ if opt.activateWGAN:
             errG.backward(one)
             optimizerG.step()
             gen_iterations += 1
+            print (gen_iterations)
 
             print('[%d/%d][%d/%d][%d] Loss_D: %f Loss_G: %f Loss_D_real: %f Loss_D_fake %f'
                 % (epoch, opt.niter, i, len(dataloader), gen_iterations,
