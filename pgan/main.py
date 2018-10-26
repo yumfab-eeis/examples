@@ -217,10 +217,10 @@ if opt.activateWGAN:
                 # train with real
                 real_cpu, _ = data
                 netD.zero_grad()
-                batch_size = real_cpu.size(0)
 
                 if opt.cuda:
                     real_cpu = real_cpu.cuda()
+                print (resl_cpu)
                 input.resize_as_(real_cpu).copy_(real_cpu)
                 inputv = Variable(input)
 
