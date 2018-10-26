@@ -227,6 +227,7 @@ if opt.activateWGAN:
                 errD_real = netD(inputv)
                 #errD_real.backward(one)
                 errD_real.backward(one[0:inputv.size()[0]])
+                print (one[0:inputv.size()[0]].size())
 
                 # train with fake
                 noise.resize_(opt.batchSize, nz, 1, 1).normal_(0, 1)
@@ -236,6 +237,8 @@ if opt.activateWGAN:
                 errD_fake = netD(inputv)
                 #errD_fake.backward(mone)
                 errD_fake.backward(mone[0:inputv.size()[0]])
+                print (mone[0:inputv.size()[0]].size())
+
                 errD = errD_real - errD_fake
                 optimizerD.step()
 
