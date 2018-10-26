@@ -223,11 +223,10 @@ if opt.activateWGAN:
                     real_cpu = real_cpu.cuda()
                 input.resize_as_(real_cpu).copy_(real_cpu)
                 inputv = Variable(input)
-                print (inputv.size()[0])
 
-                print (one[0:inputv.size()[0]].size()) 
                 errD_real = netD(inputv)
-                errD_real.backward(one)
+                #errD_real.backward(one)
+                errD_real.backward(one[0:inputv.size()[0]])
 
                 # train with fake
                 noise.resize_(opt.batchSize, nz, 1, 1).normal_(0, 1)
@@ -235,7 +234,8 @@ if opt.activateWGAN:
                 fake = Variable(netG(noisev).data)
                 inputv = fake
                 errD_fake = netD(inputv)
-                errD_fake.backward(mone)
+                #errD_fake.backward(mone)
+                errD_fake.backward(mone[0:inputv.size()[0]])
                 errD = errD_real - errD_fake
                 optimizerD.step()
 
