@@ -71,6 +71,7 @@ if opt.outDict is None:
 
 try:
     os.makedirs(opt.outDict)
+    print ("saving results to %s"%opt.outDict)
 except OSError:
     pass
 
