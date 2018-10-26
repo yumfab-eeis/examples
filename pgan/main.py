@@ -14,6 +14,7 @@ import torchvision.utils as vutils
 import torch.nn.functional as F
 from torch.autograd import Variable
 import models
+from datetime import datetime as dt
 
 #torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -35,23 +36,41 @@ parser.add_argument('--cuda', action='store_true', help='enables cuda')
 parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use')
 parser.add_argument('--netG', default='', help="path to netG (to continue training)")
 parser.add_argument('--netD', default='', help="path to netD (to continue training)")
-parser.add_argument('--outf', default='.', help='folder to output images and model checkpoints')
+parser.add_argument('--outDict', default='.', help='folder to output images and model checkpoints')
 parser.add_argument('--manualSeed', type=int, help='manual seed')
 parser.add_argument('--trainRateG', type=int, default=1, help='train rate of G:D')
 parser.add_argument('--trainRateD', type=int, default=1, help='train rate of D:G')
-parser.add_argument('--activatePG', action='store_true', help='activate Generator with PNN')
-parser.add_argument('--activatePD', action='store_true', help='activate Discriminator with PNN')
+parser.add_argument('--pG', action='store_true', help='activate Generator with PNN')
+parser.add_argument('--pD', action='store_true', help='activate Discriminator with PNN')
 parser.add_argument('--Diters', type=int, default=5, help='number of D iters per each G iter')
 parser.add_argument('--clamp_lower', type=float, default=-0.01)
 parser.add_argument('--clamp_upper', type=float, default=0.01)
-parser.add_argument('--activateWGAN', action='store_true', help='activate WassersteinGAN')
+parser.add_argument('--wGAN', action='store_true', help='activate WassersteinGAN')
 parser.add_argument('--adam', action='store_true', help='Whether to use adam (default is rmsprop)')
 
 opt = parser.parse_args()
 print(opt)
 
+tdatetime = dt.now()
+tstr = tdatetime.strftime('%y:%m:%d:%H:%M:%s')
+
+if opt.outDict is None:
+    if opt.wGAN:
+        algorithm = "WGAN"
+    else:
+        algorithm = "DCGAN"
+    if opt.pG:
+        gType = "pG"
+    else:
+        gType = "cG"
+    if opt.pD:
+        dType = "pD"
+    else:
+        dType = "cD"
+    opt.outDict = "%s_%s_%s_%s"%(tstr, algorithm, opt.dataset, gType+dType)
+
 try:
-    os.makedirs(opt.outf)
+    os.makedirs(opt.outDict)
 except OSError:
     pass
 
@@ -115,7 +134,7 @@ if opt.dataset == 'mnist':
 else:
     nc = 3
 
-if opt.activatePG:
+if opt.pG:
     print ('activate Generator with PNN...')
     #netG = models.P_Generator(ngpu, nz, ngf, nc).to(device)
     netG = models.noisegenerator101(nchannels=nc, nfilters=opt.nz, nclasses=1)
@@ -128,7 +147,7 @@ if opt.netG != '':
     netG.load_state_dict(torch.load(opt.netG))
 #print(netG)
 
-if opt.activatePD:
+if opt.pD:
     print ('activate Discriminator with PNN...')
     netD = models.noiseresnet18(nchannels=nc, nfilters=128, nclasses=1 , pool=2)
 else:
@@ -150,7 +169,7 @@ mone = one * -1
 real_label = 1
 fake_label = 0
 
-#print ('update parameters:',list(filter(lambda p: p.requires_grad,netG.parameters())))
+#print ('upDate parameters:',list(filter(lambda p: p.requires_grad,netG.parameters())))
 
 if opt.cuda:
     netD.cuda()
@@ -162,29 +181,29 @@ if opt.cuda:
 # setup optimizer
 if opt.adam:
     print ('optimizer:adam')
-    if opt.activatePG:
+    if opt.pG:
         optimizerG = optim.Adam(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lrG, betas=(opt.beta1, 0.999), weight_decay=1e-8)
     else:
         optimizerG = optim.Adam(netG.parameters(), lr=opt.lrG, betas=(opt.beta1, 0.999), weight_decay=1e-8)
 
-    if opt.activatePD:
+    if opt.pD:
         optimizerD = optim.Adam(filter(lambda p: p.requires_grad,netD.parameters()), lr=opt.lrD, betas=(opt.beta1, 0.999), weight_decay=1e-8)
     else:
         optimizerD = optim.Adam(netD.parameters(), lr=opt.lrD, betas=(opt.beta1, 0.999), weight_decay=1e-8)
 else:
     print ('optimizer:RMSprop')
-    if opt.activatePG:
+    if opt.pG:
         optimizerG = optim.RMSprop(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lrG)
     else:
         optimizerG = optim.RMSprop(netG.parameters(), lr=opt.lrG)
 
-    if opt.activatePD:
+    if opt.pD:
         optimizerD = optim.RMSprop(filter(lambda p: p.requires_grad,netD.parameters()), lr=opt.lrD)
     else:
         optimizerD = optim.RMSprop(netD.parameters(), lr=opt.lrD)
 
 # START TRAINING
-if opt.activateWGAN:
+if opt.wGAN:
     print ('Algorithm : WGAN')
     # ---WGAN Training---
     gen_iterations = 0
@@ -264,10 +283,10 @@ if opt.activateWGAN:
                 errD.data[0], errG.data[0], errD_real.data[0], errD_fake.data[0]))
             if gen_iterations % 5 == 0:
                 real_cpu = real_cpu.mul(0.5).add(0.5)
-                vutils.save_image(real_cpu, '{0}/real_samples.png'.format(opt.outf))
+                vutils.save_image(real_cpu, '{0}/real_samples.png'.format(opt.outDict))
                 fake = netG(Variable(fixed_noise, volatile=True))
                 fake.data = fake.data.mul(0.5).add(0.5)
-                vutils.save_image(fake.data, '{0}/fake_samples_{1}.png'.format(opt.outf, gen_iterations))
+                vutils.save_image(fake.data, '{0}/fake_samples_{1}.png'.format(opt.outDict, gen_iterations))
     # ---WGAN Training End---
 else:
     print ('Algorithm : DCGAN')
@@ -319,14 +338,14 @@ else:
                          errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
                 if i % 100 == 0:
                     vutils.save_image(real_cpu,
-                            '%s/real_samples.png' % opt.outf,
+                            '%s/real_samples.png' % opt.outDict,
                             normalize=True)
                     fake = netG(fixed_noise)
                     vutils.save_image(fake.detach(),
-                            '%s/fake_samples_epoch_%03d_%04d.png' % (opt.outf, epoch, i),
+                            '%s/fake_samples_epoch_%03d_%04d.png' % (opt.outDict, epoch, i),
                             normalize=True)
     # ---DCGAN Training End---
 
     # do checkpointing
-    torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
-    torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
+    torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outDict, epoch))
+    torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outDict, epoch))
