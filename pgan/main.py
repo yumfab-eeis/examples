@@ -225,7 +225,7 @@ if opt.activateWGAN:
                 inputv = Variable(input)
                 print (inputv.size()[0])
 
-                #one = torch.FloatTensor(torch.ones([opt.batchSize]))
+                print (one[0:inputv.size()[0]].size()) 
                 errD_real = netD(inputv)
                 errD_real.backward(one)
 
