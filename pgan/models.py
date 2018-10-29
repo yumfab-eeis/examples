@@ -142,27 +142,27 @@ class Discriminator(nn.Module):
     def __init__(self, ngpu, nz, ndf, nc):
         super(Discriminator, self).__init__()
         self.ngpu = ngpu
-        self.do_val = 0.1
+        self.vDO = 0.1
         self.main = nn.Sequential(
             # input is (nc) x 64 x 64
             nn.Conv2d(nc, ndf, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
-            nn.Dropout(self.do_val),
+            nn.Dropout(self.vDO),
             # state size. (ndf) x 32 x 32
             nn.Conv2d(ndf, ndf * 2, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
-            nn.Dropout(self.do_val),
+            nn.Dropout(self.vDO),
             # state size. (ndf*2) x 16 x 16
             nn.Conv2d(ndf * 2, ndf * 4, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
-            nn.Dropout(self.do_val),
+            nn.Dropout(self.vDO),
             nn.Conv2d(ndf * 4, ndf * 8, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
-            nn.Dropout(self.do_val),
+            nn.Dropout(self.vDO),
             # state size. (ndf*8) x 4 x 4
             nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
             # nn.LeakyReLU(0.2, inplace=True),
-            # nn.Dropout(self.do_val),
+            # nn.Dropout(self.vDO),
             #nn.AvgPool2d(kernel_size=4)
             nn.Sigmoid()
         )
@@ -323,9 +323,9 @@ class NoiseGenetator(nn.Module):
         )
         self.layer1 = self._make_layer(block, 8*nfilters, 8*nfilters, nblocks[0], level=0.1)
         self.layer2 = self._make_layer(block, 8*nfilters, 4*nfilters, nblocks[1], level=0.1)
-        self.layer3 = self._make_layer(block, 4*nfilters, 2*nfilters, nblocks[2], level=0.1)
-        self.layer4 = self._make_layer(block, 2*nfilters, 1*nfilters, nblocks[3], level=0.2)
-        self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=0.2)
+        self.layer3 = self._make_layer(block, 4*nfilters, 2*nfilters, nblocks[2], level=0.2)
+        self.layer4 = self._make_layer(block, 2*nfilters, 1*nfilters, nblocks[3], level=0.3)
+        self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=0.3)
         self.upsample = nn.Upsample(scale_factor=2, mode='nearest')
         self.tanh = nn.Tanh()
 
