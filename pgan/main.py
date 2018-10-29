@@ -46,7 +46,8 @@ parser.add_argument('--Diters', type=int, default=5, help='number of D iters per
 parser.add_argument('--clamp_lower', type=float, default=-0.01)
 parser.add_argument('--clamp_upper', type=float, default=0.01)
 parser.add_argument('--wGAN', action='store_true', help='activate WassersteinGAN')
-parser.add_argument('--adam', action='store_true', help='Whether to use adam (default is rmsprop)')
+parser.add_argument('--adamG', action='store_true', help='Whether to use adam (default is rmsprop for G)')
+parser.add_argument('--adamD', action='store_true', help='Whether to use adam (default is rmsprop for D)')
 
 opt = parser.parse_args()
 print(opt)
@@ -179,24 +180,27 @@ if opt.cuda:
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
 
 # setup optimizer
-if opt.adam:
-    print ('optimizer:adam')
+if opt.adamG:
+    print ('optimizer of G : adam')
     if opt.pG:
         optimizerG = optim.Adam(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lrG, betas=(opt.beta1, 0.999), weight_decay=1e-8)
     else:
         optimizerG = optim.Adam(netG.parameters(), lr=opt.lrG, betas=(opt.beta1, 0.999), weight_decay=1e-8)
-
-    if opt.pD:
-        optimizerD = optim.Adam(filter(lambda p: p.requires_grad,netD.parameters()), lr=opt.lrD, betas=(opt.beta1, 0.999), weight_decay=1e-8)
-    else:
-        optimizerD = optim.Adam(netD.parameters(), lr=opt.lrD, betas=(opt.beta1, 0.999), weight_decay=1e-8)
 else:
-    print ('optimizer:RMSprop')
+    print ('optimizer of G : RMSprop')
     if opt.pG:
         optimizerG = optim.RMSprop(filter(lambda p: p.requires_grad,netG.parameters()), lr=opt.lrG)
     else:
         optimizerG = optim.RMSprop(netG.parameters(), lr=opt.lrG)
 
+if opt.adamD:
+    print ('optimizer of D : adam')
+    if opt.pD:
+        optimizerD = optim.Adam(filter(lambda p: p.requires_grad,netD.parameters()), lr=opt.lrD, betas=(opt.beta1, 0.999), weight_decay=1e-8)
+    else:
+        optimizerD = optim.Adam(netD.parameters(), lr=opt.lrD, betas=(opt.beta1, 0.999), weight_decay=1e-8)
+else:
+    print ('optimizer of D : RMSprop')
     if opt.pD:
         optimizerD = optim.RMSprop(filter(lambda p: p.requires_grad,netD.parameters()), lr=opt.lrD)
     else:
