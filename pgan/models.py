@@ -325,7 +325,7 @@ class NoiseGenetator(nn.Module):
         self.layer2 = self._make_layer(block, 16*nfilters, 8*nfilters, nblocks[1], level=0.2)
         self.layer3 = self._make_layer(block, 8*nfilters, 4*nfilters, nblocks[2], level=0.3)
         self.layer4 = self._make_layer(block, 4*nfilters, 1*nfilters, nblocks[3], level=0.4)
-        self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=0.5)
+        self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=0.2)
         self.upsample = nn.Upsample(scale_factor=2, mode='nearest')
         self.tanh = nn.Tanh()
 
@@ -416,7 +416,7 @@ def noiseresnet152(nchannels, nfilters, nclasses, pool=7, level=0.1):
     return NoiseResNet(NoiseBottleneck, [3,8,36,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, pool=pool, level=level)
 
 def noisegenerator101(nchannels, nfilters, nclasses):
-    return NoiseGenetator(NoiseBasicBlock, [1,1,1,1,2], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses)
+    return NoiseGenetator(NoiseBasicBlock, [1,1,1,1,3], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses)
 
 def noiseresgenerator101(nchannels, nfilters, nclasses, level=0.8):
     return NoiseResGenetator(NoiseNoPoolBlock, [1,1,1,1,1], nchannels=nchannels, nfilters=nfilters, nclasses=nclasses, level=level)
