@@ -292,7 +292,7 @@ if opt.wGAN:
                 with torch.no_grad():
                     fake = netG(Variable(fixed_noise))
                 fake.data = fake.data.mul(0.5).add(0.5)
-                vutils.save_image(fake.data, '{0}/fake_samples_{1}.png'.format(opt.outDict, gen_iterations.zfill(6)))
+                vutils.save_image(fake.data, '{0}/fake_samples_{1}.png'.format(opt.outDict, str(gen_iterations).zfill(6)))
     # ---WGAN Training End---
 else:
     print ('Algorithm : DCGAN')
