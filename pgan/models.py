@@ -323,9 +323,9 @@ class NoiseGenetator(nn.Module):
         )
         self.layer1 = self._make_layer(block, 16*nfilters, 16*nfilters, nblocks[0], level=0.1)
         self.layer2 = self._make_layer(block, 16*nfilters, 8*nfilters, nblocks[1], level=0.2)
-        self.layer3 = self._make_layer(block, 8*nfilters, 4*nfilters, nblocks[2], level=0.4)
-        self.layer4 = self._make_layer(block, 4*nfilters, 1*nfilters, nblocks[3], level=0.6)
-        self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=1.0)
+        self.layer3 = self._make_layer(block, 8*nfilters, 4*nfilters, nblocks[2], level=0.3)
+        self.layer4 = self._make_layer(block, 4*nfilters, 1*nfilters, nblocks[3], level=0.4)
+        self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=0.5)
         self.upsample = nn.Upsample(scale_factor=2, mode='nearest')
         self.tanh = nn.Tanh()
 
