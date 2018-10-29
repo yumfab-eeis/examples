@@ -53,7 +53,7 @@ opt = parser.parse_args()
 print(opt)
 
 tdatetime = dt.now()
-tstr = tdatetime.strftime('%m:%d:%H:%M')
+tstr = tdatetime.strftime('%H:%M')
 
 if opt.outDict is None:
     if opt.wGAN:
