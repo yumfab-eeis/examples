@@ -290,7 +290,7 @@ if opt.wGAN:
                 vutils.save_image(real_cpu, '{0}/real_samples.png'.format(opt.outDict))
                 fake = netG(Variable(fixed_noise, volatile=True))
                 fake.data = fake.data.mul(0.5).add(0.5)
-                vutils.save_image(fake.data, '{0}/fake_samples_{0:04d}.png'.format(opt.outDict, gen_iterations))
+                vutils.save_image(fake.data, '{0}/fake_samples_{1}.png'.format(opt.outDict, gen_iterations.zfill(6)))
     # ---WGAN Training End---
 else:
     print ('Algorithm : DCGAN')
