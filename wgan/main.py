@@ -42,7 +42,8 @@ parser.add_argument('--mlp_G', action='store_true', help='use MLP for G')
 parser.add_argument('--mlp_D', action='store_true', help='use MLP for D')
 parser.add_argument('--n_extra_layers', type=int, default=0, help='Number of extra layers on gen and disc')
 parser.add_argument('--experiment', default=None, help='Where to store samples and models')
-parser.add_argument('--adam', action='store_true', help='Whether to use adam (default is rmsprop)')
+parser.add_argument('--adamG', action='store_true', help='Whether to use adam (default is rmsprop for G)')
+parser.add_argument('--adamD', action='store_true', help='Whether to use adam (default is rmsprop for D)')
 opt = parser.parse_args()
 print(opt)
 
@@ -141,12 +142,15 @@ if opt.cuda:
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
 
 # setup optimizer
-if opt.adam:
-    optimizerD = optim.Adam(netD.parameters(), lr=opt.lrD, betas=(opt.beta1, 0.999))
+if opt.adamG:
     optimizerG = optim.Adam(netG.parameters(), lr=opt.lrG, betas=(opt.beta1, 0.999))
 else:
-    optimizerD = optim.RMSprop(netD.parameters(), lr = opt.lrD)
     optimizerG = optim.RMSprop(netG.parameters(), lr = opt.lrG)
+
+if opt.adamD:
+    optimizerD = optim.Adam(netD.parameters(), lr=opt.lrD, betas=(opt.beta1, 0.999))
+else:
+    optimizerD = optim.RMSprop(netD.parameters(), lr = opt.lrD)
 
 gen_iterations = 0
 for epoch in range(opt.niter):
