@@ -255,7 +255,6 @@ if opt.wGAN:
                 # train with fake
                 noise.resize_(opt.batchSize, nz, 1, 1).normal_(0, 1)
                 noisev = Variable(noise, volatile = True) # totally freeze netG
-                print (noisev[0:10])
                 fake = Variable(netG(noisev).data)
                 fake.resize_as_(real_cpu).copy_(real_cpu)
                 inputv = fake
