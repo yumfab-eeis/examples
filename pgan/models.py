@@ -317,14 +317,14 @@ class NoiseGenetator(nn.Module):
         #memo: changed self.in_planes -> in_planes
         self.in_planes = nfilters
         self.pre_layers = nn.Sequential(
-            nn.ConvTranspose2d(  self.in_planes, 8*nfilters, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(8*nfilters),
+            nn.ConvTranspose2d(  self.in_planes, 16*nfilters, 4, 1, 0, bias=False),
+            nn.BatchNorm2d(16*nfilters),
             nn.ReLU(True),
         )
-        self.layer1 = self._make_layer(block, 8*nfilters, 8*nfilters, nblocks[0], level=0.1)
-        self.layer2 = self._make_layer(block, 8*nfilters, 4*nfilters, nblocks[1], level=0.2)
-        self.layer3 = self._make_layer(block, 4*nfilters, 2*nfilters, nblocks[2], level=0.3)
-        self.layer4 = self._make_layer(block, 2*nfilters, 1*nfilters, nblocks[3], level=0.4)
+        self.layer1 = self._make_layer(block, 16*nfilters, 16*nfilters, nblocks[0], level=0.1)
+        self.layer2 = self._make_layer(block, 16*nfilters, 8*nfilters, nblocks[1], level=0.2)
+        self.layer3 = self._make_layer(block, 8*nfilters, 4*nfilters, nblocks[2], level=0.3)
+        self.layer4 = self._make_layer(block, 4*nfilters, 1*nfilters, nblocks[3], level=0.4)
         self.layer5 = self._make_layer(block, 1*nfilters, nchannels, nblocks[4], level=0.5)
         self.upsample = nn.Upsample(scale_factor=2, mode='nearest')
         self.tanh = nn.Tanh()
