@@ -254,7 +254,8 @@ if opt.wGAN:
 
                 # train with fake
                 noise.resize_(opt.batchSize, nz, 1, 1).normal_(0, 1)
-                noisev = Variable(noise, volatile = True) # totally freeze netG
+                with torch.no_grad():
+                    noisev = Variable(noise) # totally freeze netG
                 fake = Variable(netG(noisev).data)
                 fake.resize_as_(real_cpu).copy_(real_cpu)
                 inputv = fake
@@ -288,7 +289,8 @@ if opt.wGAN:
             if gen_iterations % 2 == 0:
                 real_cpu = real_cpu.mul(0.5).add(0.5)
                 vutils.save_image(real_cpu, '{0}/real_samples.png'.format(opt.outDict))
-                fake = netG(Variable(fixed_noise, volatile=True))
+                with torch.no_grad():
+                    fake = netG(Variable(fixed_noise))
                 fake.data = fake.data.mul(0.5).add(0.5)
                 vutils.save_image(fake.data, '{0}/fake_samples_{1}.png'.format(opt.outDict, gen_iterations.zfill(6)))
     # ---WGAN Training End---
