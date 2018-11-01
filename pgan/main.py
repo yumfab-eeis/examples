@@ -342,7 +342,7 @@ else:
                 print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
                       % (epoch, opt.niter, i, len(dataloader),
                          errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
-                if i % 50 == 0:
+                if i % 1 == 0:
                     vutils.save_image(real_cpu,
                             '%s/real_samples.png' % opt.outDict,
                             normalize=True)
