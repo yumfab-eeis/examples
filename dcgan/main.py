@@ -209,7 +209,7 @@ for epoch in range(opt.niter):
         # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
         ###########################
         # train with real
-        print (data[0].size())
+
         netD.zero_grad()
         real_cpu = data[0].to(device)
         batch_size = real_cpu.size(0)
@@ -220,6 +220,8 @@ for epoch in range(opt.niter):
         errD_real = criterion(output, label)
         errD_real.backward()
         D_x = output.mean().item()
+
+        print (errD_real)
 
         # train with fake
         noise = torch.randn(batch_size, nz, 1, 1, device=device)
