@@ -216,12 +216,10 @@ for epoch in range(opt.niter):
         label = torch.full((batch_size,), real_label, device=device)
 
         output = netD(real_cpu)
-        print (real_cpu.size())
+        print (output)
         errD_real = criterion(output, label)
         errD_real.backward()
         D_x = output.mean().item()
-
-        print (errD_real)
 
         # train with fake
         noise = torch.randn(batch_size, nz, 1, 1, device=device)
